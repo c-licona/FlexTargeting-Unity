@@ -1,0 +1,1 @@
+A light-weight, flexible, allocation-free solution for finding the best "target" in your game.

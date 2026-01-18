@@ -1,0 +1,14 @@
+{
+  "name": "com.clicona.flextargeting",
+  "displayName": "Flex Targeting",
+  "version": "0.1.0",
+  "description": "A light-weight, flexible, allocation-free solution for finding the best \"target\" in your game.",
+  "author": {
+    "name": "Christian Licona",
+    "url": "http://www.christianlicona.com",
+    "email": "christian.jovanni.licona@gmail.com"
+  },
+  "changelogUrl": "CHANGELOG.md",
+  "documentationUrl": "README.md",
+  "licensesUrl": "LICENSE.md"
+}
