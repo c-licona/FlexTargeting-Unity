@@ -24,7 +24,7 @@ namespace Cyclic.FlexTargeting
         /// Get the origin of the targeter that is performing the targeting. Only targets that are close enough to this
         /// position value (as determined by <see cref="MaxRange"/>) will be considered in the targeting process.
         /// </summary>
-        Vector3 TargetingOriginPosition { get; }
+        Vector3 TargeterPosition { get; }
 
         /// <summary>
         /// The max range at which to consider targets for targeting. Any targets that are farther away than this range
@@ -49,7 +49,7 @@ namespace Cyclic.FlexTargeting
 
         /// <summary>
         /// A common aspect to Flex Targeting is using line-of-sight checks to ensure a target is valid. A ray is
-        /// formed between the <see cref="TargetingOriginPosition"/> and the flex target
+        /// formed between the <see cref="TargeterPosition"/> and the flex target
         /// <see cref="IFlexTarget.TargetPosition"/> to evaluate LOS. This layer mask determines which layers can block
         /// the LOS ray. Use <see cref="FlexTargetingExtras.NoLayers"/> if LOS checks are not needed.
         /// </summary>

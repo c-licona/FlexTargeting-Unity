@@ -11,7 +11,7 @@ namespace Cyclic.FlexTargeting.Builtin
     public class RangeTargetingData : IFlexData<IFlexTarget>
     {
         [Header("References")]
-        [SerializeField] private Transform _targetingOrigin;
+        [SerializeField] private Transform _targeterOrigin;
 
         [Header("Settings")]
         [SerializeField, Min(0.0f)] private float _maxRange = 10.0f;
@@ -20,7 +20,7 @@ namespace Cyclic.FlexTargeting.Builtin
         [SerializeField, Min(0.0f)] private float _losBufferRadius = 0.0f;
         [SerializeField] private LayerMask _losLayerMask = Physics.DefaultRaycastLayers;
 
-        public Vector3 TargetingOriginPosition => _targetingOrigin.position;
+        public Vector3 TargeterPosition => _targeterOrigin.position;
         public float MaxRange { get => _maxRange; set => _maxRange = value; }
         public float LosBufferRadius { get => _losBufferRadius; set => _losBufferRadius = value; }
         public LayerMask LosLayerMask { get => _losLayerMask; set => _losLayerMask = value; }
@@ -31,7 +31,7 @@ namespace Cyclic.FlexTargeting.Builtin
              * The distance between the target and the origin is used as the targeting score. Only targets that are
              * within the max range are accepted as valid targets, the rest are filtered out
              */
-            score = Vector3.Distance(TargetingOriginPosition, flexTarget.TargetPosition);
+            score = Vector3.Distance(TargeterPosition, flexTarget.TargetPosition);
             return score <= _maxRange; // this should always be true since this is only being called on in range targets
         }
     }

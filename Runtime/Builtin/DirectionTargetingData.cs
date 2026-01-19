@@ -3,7 +3,7 @@ using UnityEngine;
 
 namespace Cyclic.FlexTargeting.Builtin
 {
-    public enum TargetingOriginSource
+    public enum TargeterOriginSource
     {
         Transform,
         Manual
@@ -18,8 +18,8 @@ namespace Cyclic.FlexTargeting.Builtin
     public class DirectionTargetingData : IFlexData<IFlexTarget>
     {
         [Header("References")]
-        [SerializeField] private TargetingOriginSource _targetingOriginSource = TargetingOriginSource.Transform;
-        [SerializeField] private Transform _targetingOrigin = null;
+        [SerializeField] private TargeterOriginSource _targeterOriginSource = TargeterOriginSource.Transform;
+        [SerializeField] private Transform _targeterOrigin = null;
 
         [Header("Settings")]
         [SerializeField, Min(0.0f)] private float _maxRange = 10.0f;
@@ -33,33 +33,33 @@ namespace Cyclic.FlexTargeting.Builtin
         public float LosBufferRadius { get => _losBufferRadius; set => _losBufferRadius = value; }
         public LayerMask LosLayerMask { get => _losLayerMask; set => _losLayerMask = value; }
 
-        public TargetingOriginSource TargetingOriginSource { get => _targetingOriginSource; set => _targetingOriginSource = value; }
-        public Transform TargetingOrigin { get => _targetingOrigin; set => _targetingOrigin = value; }
+        public TargeterOriginSource TargeterOriginSource { get => _targeterOriginSource; set => _targeterOriginSource = value; }
+        public Transform TargeterOrigin { get => _targeterOrigin; set => _targeterOrigin = value; }
         public float HalfAngle { get => _halfAngle; set => _halfAngle = value; }
         public Vector3 ManualOriginPos { get; set; } = Vector3.zero;
         public Vector3 ManualOriginDir { get; set; } = Vector3.zero;
 
-        public Vector3 TargetingOriginPosition
+        public Vector3 TargeterPosition
         {
             get
             {
-                return _targetingOriginSource switch
+                return _targeterOriginSource switch
                 {
-                    TargetingOriginSource.Transform => _targetingOrigin.position,
-                    TargetingOriginSource.Manual => ManualOriginPos,
+                    TargeterOriginSource.Transform => _targeterOrigin.position,
+                    TargeterOriginSource.Manual => ManualOriginPos,
                     _ => throw new ArgumentOutOfRangeException()
                 };
             }
         }
 
-        public Vector3 TargetingOriginDir
+        public Vector3 TargeterDirection
         {
             get
             {
-                return _targetingOriginSource switch
+                return _targeterOriginSource switch
                 {
-                    TargetingOriginSource.Transform => _targetingOrigin.forward,
-                    TargetingOriginSource.Manual => ManualOriginDir,
+                    TargeterOriginSource.Transform => _targeterOrigin.forward,
+                    TargeterOriginSource.Manual => ManualOriginDir,
                     _ => throw new ArgumentOutOfRangeException()
                 };
             }
@@ -73,8 +73,8 @@ namespace Cyclic.FlexTargeting.Builtin
              * as the best target. Only targets that are within the given half angle are accepted as valid targets, the
              * rest are filtered out
              */
-            Vector3 oPos = TargetingOriginPosition;
-            Vector3 oForward = TargetingOriginDir;
+            Vector3 oPos = TargeterPosition;
+            Vector3 oForward = TargeterDirection;
             Vector3 targetPos = flexTarget.TargetPosition;
 
             score = Vector3.Angle(targetPos - oPos, oForward);

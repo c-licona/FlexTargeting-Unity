@@ -123,7 +123,7 @@ namespace Cyclic.FlexTargeting
             // filter valid targets and score them
             foreach (var flexTarget in inputTargets)
             {
-                if (Vector3.Distance(data.TargetingOriginPosition, flexTarget.TargetPosition) <= data.MaxRange &&
+                if (Vector3.Distance(data.TargeterPosition, flexTarget.TargetPosition) <= data.MaxRange &&
                     flexTarget.IsTargetValid &&
                     targetFilter.Invoke(flexTarget) &&
                     data.ScoreTarget(flexTarget, out float score))
@@ -222,7 +222,7 @@ namespace Cyclic.FlexTargeting
             // filter valid targets and score them
             foreach (var flexTarget in inputTargets)
             {
-                if (Vector3.Distance(data.TargetingOriginPosition, flexTarget.TargetPosition) <= data.MaxRange &&
+                if (Vector3.Distance(data.TargeterPosition, flexTarget.TargetPosition) <= data.MaxRange &&
                     flexTarget.IsTargetValid &&
                     targetFilter.Invoke(context, flexTarget) &&
                     data.ScoreTarget(flexTarget, out float score))
@@ -300,7 +300,7 @@ namespace Cyclic.FlexTargeting
             // filter valid targets and score them
             foreach (var flexTarget in inputTargets)
             {
-                if (Vector3.Distance(data.TargetingOriginPosition, flexTarget.TargetPosition) <= data.MaxRange &&
+                if (Vector3.Distance(data.TargeterPosition, flexTarget.TargetPosition) <= data.MaxRange &&
                     flexTarget.IsTargetValid &&
                     targetFilter.Invoke(flexTarget) &&
                     data.ScoreTarget(flexTarget, out float score) &&
@@ -354,7 +354,7 @@ namespace Cyclic.FlexTargeting
             // filter valid targets and score them
             foreach (var flexTarget in inputTargets)
             {
-                if (Vector3.Distance(data.TargetingOriginPosition, flexTarget.TargetPosition) <= data.MaxRange &&
+                if (Vector3.Distance(data.TargeterPosition, flexTarget.TargetPosition) <= data.MaxRange &&
                     flexTarget.IsTargetValid &&
                     targetFilter.Invoke(context, flexTarget) &&
                     data.ScoreTarget(flexTarget, out float score) &&
@@ -393,7 +393,7 @@ namespace Cyclic.FlexTargeting
             // if the LOS layer mask is set to nothing then automatically return as not blocked
             if (data.LosLayerMask.value == FlexTargetingExtras.NoLayers) return false;
 
-            Vector3 origin = data.TargetingOriginPosition;
+            Vector3 origin = data.TargeterPosition;
             Vector3 oToTarget = target.TargetPosition - origin;
             float rayDistance = oToTarget.magnitude - target.LosBufferRadius - data.LosBufferRadius;
             // if a target is so close that the distance is non-positive than we consider it not LOS blocked

@@ -11,18 +11,18 @@ public class TargetingTestsWithOneTarget
 
         public bool IsTargetValid { get; set; } = true;
         public Vector3 TargetPosition { get; } = Vector3.forward;
-        public float LosRadius => 0.0f;
+        public float LosBufferRadius => 0.0f;
     }
 
     private class TestData : IFlexData<IFlexTarget>
     {
-        public Vector3 TargetingOriginPosition { get; } = Vector3.zero;
+        public Vector3 TargeterPosition { get; } = Vector3.zero;
         public float MaxRange { get; set; } = 10.0f;
         public LayerMask LosLayerMask => FlexTargetingExtras.NoLayers;
 
         public bool ScoreTarget(IFlexTarget flexTarget, out float score)
         {
-            score = Vector3.Distance(TargetingOriginPosition, flexTarget.TargetPosition);
+            score = Vector3.Distance(TargeterPosition, flexTarget.TargetPosition);
             return score <= MaxRange;
         }
     }

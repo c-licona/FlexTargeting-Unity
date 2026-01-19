@@ -20,7 +20,7 @@ namespace Cyclic.FlexTargeting.Builtin
         [SerializeField, Min(Single.Epsilon)] private float _rangeBandWidth = 10.0f;
         [SerializeField] private LayerMask _losLayerMask = Physics.AllLayers;
 
-        public Vector3 TargetingOriginPosition => _targetingOrigin.position;
+        public Vector3 TargeterPosition => _targetingOrigin.position;
         public float MaxRange => _maxRange;
         public LayerMask LosLayerMask => _losLayerMask;
 
@@ -43,7 +43,7 @@ namespace Cyclic.FlexTargeting.Builtin
         /// </example>
         public bool ScoreTarget(IFlexTarget flexTarget, out float score)
         {
-            Vector3 oPos = TargetingOriginPosition;
+            Vector3 oPos = TargeterPosition;
             Vector3 oForward = _targetingOrigin.forward;
             Vector3 targetPos = flexTarget.TargetPosition;
 
