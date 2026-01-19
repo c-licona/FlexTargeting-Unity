@@ -395,12 +395,12 @@ namespace Cyclic.FlexTargeting
 
             Vector3 origin = data.TargetingOriginPosition;
             Vector3 oToTarget = target.TargetPosition - origin;
-            float rayDistance = oToTarget.magnitude - target.LosRadius - data.LosOriginOffset;
+            float rayDistance = oToTarget.magnitude - target.LosBufferRadius - data.LosBufferRadius;
             // if a target is so close that the distance is non-positive than we consider it not LOS blocked
             if (rayDistance <= Mathf.Epsilon) return false;
 
             int numHits = Physics.RaycastNonAlloc(
-                origin: origin + (oToTarget.normalized * data.LosOriginOffset),
+                origin: origin + (oToTarget.normalized * data.LosBufferRadius),
                 direction: oToTarget.normalized,
                 s_losResults,
                 rayDistance,

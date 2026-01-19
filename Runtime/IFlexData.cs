@@ -33,13 +33,19 @@ namespace Cyclic.FlexTargeting
         float MaxRange { get; }
 
         /// <summary>
-        /// A common aspect to Flex Targeting is using line-of-sight checks to ensure a target is valid. A ray is
-        /// formed between the <see cref="TargetingOriginPosition"/> and the flex target
-        /// <see cref="IFlexTarget.TargetPosition"/> to evaluate LOS. This offset value can be used to shrink the ray
-        /// on the targeter side so that the LOS ray does not intersect with the targeters own geometry. See
-        /// <see cref="LosLayerMask"/> if LOS is not needed.
+        /// <para>
+        /// Distance value used to offset the line-of-sight (LOS) ray on the TARGETER side. This is helpful for making
+        /// sure the LOS ray does not intersect with the targeters own geometry. See <see cref="LosLayerMask"/> if LOS
+        /// is not needed.
+        /// </para>
+        /// <para>
+        /// If the target is so close that it is within this radius, the LOS check automatically passes.
+        /// </para>
+        /// <remarks>
+        /// Since it isn't very common to change this value, the default interface implementation sets this value to 0
+        /// </remarks>
         /// </summary>
-        float LosOriginOffset => 0.0f;
+        float LosBufferRadius => 0.0f;
 
         /// <summary>
         /// A common aspect to Flex Targeting is using line-of-sight checks to ensure a target is valid. A ray is

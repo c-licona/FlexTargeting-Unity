@@ -31,12 +31,12 @@ namespace Cyclic.FlexTargeting
 
         public virtual bool IsTargetValid => enabled;
         public abstract Vector3 TargetPosition { get; }
-        public abstract float LosRadius { get; }
+        public abstract float LosBufferRadius { get; }
 
         #if UNITY_EDITOR
         protected virtual void OnDrawGizmosSelected()
         {
-            Gizmos.DrawWireSphere(TargetPosition, LosRadius);
+            Gizmos.DrawWireSphere(TargetPosition, LosBufferRadius);
         }
         #endif
     }

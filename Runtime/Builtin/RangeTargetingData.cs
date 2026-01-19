@@ -15,12 +15,14 @@ namespace Cyclic.FlexTargeting.Builtin
 
         [Header("Settings")]
         [SerializeField, Min(0.0f)] private float _maxRange = 10.0f;
-        [SerializeField, Min(0.0f)] private float _losOriginOffset = 0.0f;
+        [Tooltip("Defines a radius around the origin point from which LOS checks will begin. Use a non-zero value " +
+                 "if there is a chance that LOS checks will be blocked by the targeter itself.")]
+        [SerializeField, Min(0.0f)] private float _losBufferRadius = 0.0f;
         [SerializeField] private LayerMask _losLayerMask = Physics.DefaultRaycastLayers;
 
         public Vector3 TargetingOriginPosition => _targetingOrigin.position;
         public float MaxRange { get => _maxRange; set => _maxRange = value; }
-        public float LosOriginOffset { get => _losOriginOffset; set => _losOriginOffset = value; }
+        public float LosBufferRadius { get => _losBufferRadius; set => _losBufferRadius = value; }
         public LayerMask LosLayerMask { get => _losLayerMask; set => _losLayerMask = value; }
 
         public bool ScoreTarget(IFlexTarget flexTarget, out float score)
