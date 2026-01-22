@@ -8,8 +8,8 @@ namespace Cyclic.FlexTargeting
 {
     public struct FlexTargetListItem
     {
-        public IFlexTarget FlexTarget;
-        public float Score;
+        public IFlexTarget flexTarget;
+        public float score;
     }
 
     /// <summary>
@@ -46,8 +46,8 @@ namespace Cyclic.FlexTargeting
         /// </summary>
         public const int NoLayers = 0;
 
-        public static readonly Comparison<FlexTargetListItem> SortBySmallestScore = (x, y) => x.Score.CompareTo(y.Score);
-        public static readonly Comparison<FlexTargetListItem> SortByLargestScore = (x, y) => y.Score.CompareTo(x.Score);
+        public static readonly Comparison<FlexTargetListItem> SortBySmallestScore = (x, y) => x.score.CompareTo(y.score);
+        public static readonly Comparison<FlexTargetListItem> SortByLargestScore = (x, y) => y.score.CompareTo(x.score);
     }
 
     public static class FlexTargetingCore
@@ -127,7 +127,7 @@ namespace Cyclic.FlexTargeting
                     targetFilter.Invoke(flexTarget) &&
                     data.ScoreTarget(flexTarget, out float score))
                 {
-                    s_potentialTargets.Add(new FlexTargetListItem() { FlexTarget = flexTarget, Score = score });
+                    s_potentialTargets.Add(new FlexTargetListItem() { flexTarget = flexTarget, score = score });
                 }
             }
 
@@ -137,7 +137,7 @@ namespace Cyclic.FlexTargeting
             // return the first target that isn't LOS blocked
             foreach (var targetItem in s_potentialTargets)
             {
-                IFlexTarget target = targetItem.FlexTarget;
+                IFlexTarget target = targetItem.flexTarget;
 
                 if (!IsTargetLosBlocked(data, target))
                 {
@@ -225,7 +225,7 @@ namespace Cyclic.FlexTargeting
                     targetFilter.Invoke(context, flexTarget) &&
                     data.ScoreTarget(flexTarget, out float score))
                 {
-                    s_potentialTargets.Add(new FlexTargetListItem() { FlexTarget = flexTarget, Score = score });
+                    s_potentialTargets.Add(new FlexTargetListItem() { flexTarget = flexTarget, score = score });
                 }
             }
 
@@ -235,7 +235,7 @@ namespace Cyclic.FlexTargeting
             // return the first target that isn't LOS blocked
             foreach (var targetItem in s_potentialTargets)
             {
-                IFlexTarget target = targetItem.FlexTarget;
+                IFlexTarget target = targetItem.flexTarget;
 
                 if (!IsTargetLosBlocked(data, target))
                 {
@@ -303,7 +303,7 @@ namespace Cyclic.FlexTargeting
                     data.ScoreTarget(flexTarget, out float score) &&
                     !IsTargetLosBlocked(data, flexTarget))
                 {
-                    s_potentialTargets.Add(new FlexTargetListItem() { FlexTarget = flexTarget, Score = score });
+                    s_potentialTargets.Add(new FlexTargetListItem() { flexTarget = flexTarget, score = score });
                 }
             }
 
@@ -313,7 +313,7 @@ namespace Cyclic.FlexTargeting
             // send the filtered targets to the final targets list
             foreach (var targetItem in s_potentialTargets)
             {
-                finalTargets.Add(targetItem.FlexTarget as TTarget);
+                finalTargets.Add(targetItem.flexTarget as TTarget);
             }
 
             return finalTargets.Count;
@@ -356,7 +356,7 @@ namespace Cyclic.FlexTargeting
                     data.ScoreTarget(flexTarget, out float score) &&
                     !IsTargetLosBlocked(data, flexTarget))
                 {
-                    s_potentialTargets.Add(new FlexTargetListItem() { FlexTarget = flexTarget, Score = score });
+                    s_potentialTargets.Add(new FlexTargetListItem() { flexTarget = flexTarget, score = score });
                 }
             }
 
@@ -366,7 +366,7 @@ namespace Cyclic.FlexTargeting
             // send the filtered targets to the final targets list
             foreach (var targetItem in s_potentialTargets)
             {
-                finalTargets.Add(targetItem.FlexTarget as TTarget);
+                finalTargets.Add(targetItem.flexTarget as TTarget);
             }
 
             return finalTargets.Count;
