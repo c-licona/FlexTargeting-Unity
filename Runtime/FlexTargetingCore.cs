@@ -60,58 +60,58 @@ namespace Cyclic.FlexTargeting
 
         /// <inheritdoc cref="DetermineBestTarget{TTarget}(IFlexData{TTarget}, out TTarget, in List{TTarget}, TargetFilter{TTarget})"/>
         public static bool DetermineBestTarget<TTarget>([NotNull] IFlexData<TTarget> data,
-            out TTarget finalTarget)
+            out TTarget bestTarget)
             where TTarget : class, IFlexTarget
         {
             return DetermineBestTarget(data,
-                out finalTarget,
+                out bestTarget,
                 inputTargets: FlexTargetRepository.Instance.OfType<TTarget>().Targets(),
                 s_nullFilter);
         }
 
         /// <inheritdoc cref="DetermineBestTarget{TTarget}(IFlexData{TTarget}, out TTarget, in List{TTarget}, TargetFilter{TTarget})"/>
         public static bool DetermineBestTarget<TTarget>([NotNull] IFlexData<TTarget> data,
-            out TTarget finalTarget,
+            out TTarget bestTarget,
             in List<TTarget> inputTargets)
             where TTarget : class, IFlexTarget
         {
             return DetermineBestTarget(data,
-                out finalTarget,
+                out bestTarget,
                 in inputTargets,
                 s_nullFilter);
         }
 
         /// <inheritdoc cref="DetermineBestTarget{TTarget}(IFlexData{TTarget}, out TTarget, in List{TTarget}, TargetFilter{TTarget})"/>
         public static bool DetermineBestTarget<TTarget>([NotNull] IFlexData<TTarget> data,
-            out TTarget finalTarget,
+            out TTarget bestTarget,
             [NotNull] TargetFilter<TTarget> targetFilter)
             where TTarget : class, IFlexTarget
         {
             return DetermineBestTarget(data,
-                out finalTarget,
+                out bestTarget,
                 inputTargets: FlexTargetRepository.Instance.OfType<TTarget>().Targets(),
                 targetFilter);
         }
 
         /// <summary>
         /// Determines the best target of type <typeparamref name="TTarget"/> from the <paramref name="inputTargets"/> and
-        /// outputs that best target to <paramref name="finalTarget"/>. The data and scoring method that is used to
+        /// outputs that best target to <paramref name="bestTarget"/>. The data and scoring method that is used to
         /// determine the best target is contained within the provided <paramref name="data"/>. An optional
         /// <paramref name="targetFilter"/> can be provided to further filter out valid targets.
         /// </summary>
         /// <param name="data">A container with the data and scoring method to use for sorting and ultimately
         ///     determining the best target to return.</param>
-        /// <param name="finalTarget">The best target that scores the best among the rest of the potential targets.
+        /// <param name="bestTarget">The best target that scores the best among the rest of the potential targets.
         ///     Will be null when no valid target was found.</param>
         /// <param name="inputTargets">An enumerable collection of targets that will be filtered, scored, and
         ///     sorted to determine which is the best target to return.</param>
         /// <param name="targetFilter">A delegate that can further process each input target to determine whether it
         ///     should be considered for the final determination.</param>
         /// <typeparam name="TTarget">The type of flex target to be considered.</typeparam>
-        /// <returns>Returns true if a valid final target was returned into <paramref name="finalTarget"/>. Returns
-        /// false if no valid target was found, in which case <paramref name="finalTarget"/> will be null.</returns>
+        /// <returns>Returns true if a valid final target was returned into <paramref name="bestTarget"/>. Returns
+        /// false if no valid target was found, in which case <paramref name="bestTarget"/> will be null.</returns>
         public static bool DetermineBestTarget<TTarget>([NotNull] IFlexData<TTarget> data,
-            out TTarget finalTarget,
+            out TTarget bestTarget,
             in List<TTarget> inputTargets,
             [NotNull] TargetFilter<TTarget> targetFilter)
             where TTarget : class, IFlexTarget
@@ -141,12 +141,12 @@ namespace Cyclic.FlexTargeting
 
                 if (!IsTargetLosBlocked(data, target))
                 {
-                    finalTarget = target as TTarget;
+                    bestTarget = target as TTarget;
                     return true;
                 }
             }
 
-            finalTarget = null;
+            bestTarget = null;
             return false;
         }
 
@@ -157,13 +157,13 @@ namespace Cyclic.FlexTargeting
         /// <inheritdoc cref="DetermineBestTarget{TContext, TTarget}(TContext, IFlexData{TTarget}, out TTarget, in List{TTarget}, TargetFilter{TContext, TTarget})"/>
         public static bool DetermineBestTarget<TContext, TTarget>(TContext context,
             [NotNull] IFlexData<TTarget> data,
-            out TTarget finalTarget,
+            out TTarget bestTarget,
             [NotNull] TargetFilter<TContext, TTarget> targetFilter)
             where TTarget : class, IFlexTarget
         {
             return DetermineBestTarget(context,
                 data,
-                out finalTarget,
+                out bestTarget,
                 inputTargets: FlexTargetRepository.Instance.OfType<TTarget>().Targets(),
                 targetFilter);
         }
@@ -171,7 +171,7 @@ namespace Cyclic.FlexTargeting
         /// <summary>
         /// <para>
         /// Determines the best target of type <typeparamref name="TTarget"/> from the <paramref name="inputTargets"/>
-        /// container and outputs that best target to <paramref name="finalTarget"/>. The data and scoring method that
+        /// container and outputs that best target to <paramref name="bestTarget"/>. The data and scoring method that
         /// is used to determine the best target is contained within the provided <paramref name="data"/>. An optional
         /// <paramref name="targetFilter"/> can be provided to further filter out valid targets.
         /// </para>
@@ -185,9 +185,9 @@ namespace Cyclic.FlexTargeting
         /// <example>
         /// <code>
         /// // an example in which the context is not passed in. this results in a delegate allocation!
-        /// FlexTargetingCore.DetermineBestTarget(data, out finalTarget, inputTargets, (target) => SomeMethod(target));
+        /// FlexTargetingCore.DetermineBestTarget(data, out bestTarget, inputTargets, (target) => SomeMethod(target));
         /// // an example in which the context IS passed in. this results in no allocation.
-        /// FlexTargetingCore.DetermineBestTarget(context: this, data, out finalTarget, inputTargets, (context, target) => context.SomeMethod(target));
+        /// FlexTargetingCore.DetermineBestTarget(context: this, data, out bestTarget, inputTargets, (context, target) => context.SomeMethod(target));
         /// </code>
         /// </example>
         /// </summary>
@@ -196,7 +196,7 @@ namespace Cyclic.FlexTargeting
         ///     object: <c>this</c></param>
         /// <param name="data">A container with the data and scoring method to use for sorting and ultimately
         ///     determining the best target to return.</param>
-        /// <param name="finalTarget">The best target that scores the best among the rest of the potential targets.
+        /// <param name="bestTarget">The best target that scores the best among the rest of the potential targets.
         ///     Will be null when no valid target was found.</param>
         /// <param name="inputTargets">An enumerable collection of targets that will be filtered, scored, and
         ///     sorted to determine which is the best target to return.</param>
@@ -205,11 +205,11 @@ namespace Cyclic.FlexTargeting
         /// <typeparam name="TContext">The type of the <paramref name="context"/> object passed in which will be
         /// passed along into the <paramref name="targetFilter"/></typeparam>
         /// <typeparam name="TTarget">The type of flex target to be considered.</typeparam>
-        /// <returns>Returns true if a valid final target was returned into <paramref name="finalTarget"/>. Returns
-        /// false if no valid target was found, in which case <paramref name="finalTarget"/> will be null.</returns>
+        /// <returns>Returns true if a valid final target was returned into <paramref name="bestTarget"/>. Returns
+        /// false if no valid target was found, in which case <paramref name="bestTarget"/> will be null.</returns>
         public static bool DetermineBestTarget<TContext, TTarget>(TContext context,
             [NotNull] IFlexData<TTarget> data,
-            out TTarget finalTarget,
+            out TTarget bestTarget,
             in List<TTarget> inputTargets,
             [NotNull] TargetFilter<TContext, TTarget> targetFilter)
             where TTarget : class, IFlexTarget
@@ -239,12 +239,12 @@ namespace Cyclic.FlexTargeting
 
                 if (!IsTargetLosBlocked(data, target))
                 {
-                    finalTarget = target as TTarget;
+                    bestTarget = target as TTarget;
                     return true;
                 }
             }
 
-            finalTarget = null;
+            bestTarget = null;
             return false;
         }
 
@@ -253,46 +253,46 @@ namespace Cyclic.FlexTargeting
         #region DetermineBestTargets
 
         public static int DetermineBestTargets<TTarget>([NotNull] IFlexData<TTarget> data,
-            in List<TTarget> finalTargets)
+            in List<TTarget> bestTargets)
             where TTarget : class, IFlexTarget
         {
             return DetermineBestTargets(data,
-                in finalTargets,
+                in bestTargets,
                 inputTargets: FlexTargetRepository.Instance.OfType<TTarget>().Targets(),
                 s_nullFilter);
         }
 
         public static int DetermineBestTargets<TTarget>([NotNull] IFlexData<TTarget> data,
-            in List<TTarget> finalTargets,
+            in List<TTarget> bestTargets,
             in List<TTarget> inputTargets)
             where TTarget : class, IFlexTarget
         {
             return DetermineBestTargets(data,
-                in finalTargets,
+                in bestTargets,
                 in inputTargets,
                 s_nullFilter);
         }
 
         public static int DetermineBestTargets<TTarget>([NotNull] IFlexData<TTarget> data,
-            in List<TTarget> finalTargets,
+            in List<TTarget> bestTargets,
             [NotNull] TargetFilter<TTarget> targetFilter)
             where TTarget : class, IFlexTarget
         {
             return DetermineBestTargets(data,
-                in finalTargets,
+                in bestTargets,
                 inputTargets: FlexTargetRepository.Instance.OfType<TTarget>().Targets(),
                 targetFilter);
         }
 
         public static int DetermineBestTargets<TTarget>([NotNull] IFlexData<TTarget> data,
-            in List<TTarget> finalTargets,
+            in List<TTarget> bestTargets,
             in List<TTarget> inputTargets,
             [NotNull] TargetFilter<TTarget> targetFilter)
             where TTarget : class, IFlexTarget
         {
             Assert.IsNotNull(data);
             Assert.IsNotNull(targetFilter);
-            finalTargets.Clear();
+            bestTargets.Clear();
             s_potentialTargets.Clear();
 
             // filter valid targets and score them
@@ -313,10 +313,10 @@ namespace Cyclic.FlexTargeting
             // send the filtered targets to the final targets list
             foreach (var targetItem in s_potentialTargets)
             {
-                finalTargets.Add(targetItem.flexTarget as TTarget);
+                bestTargets.Add(targetItem.flexTarget as TTarget);
             }
 
-            return finalTargets.Count;
+            return bestTargets.Count;
         }
 
         #endregion
@@ -325,27 +325,27 @@ namespace Cyclic.FlexTargeting
 
         public static int DetermineBestTargets<TContext, TTarget>(TContext context,
             [NotNull] IFlexData<TTarget> data,
-            in List<TTarget> finalTargets,
+            in List<TTarget> bestTargets,
             [NotNull] TargetFilter<TContext, TTarget> targetFilter)
             where TTarget : class, IFlexTarget
         {
             return DetermineBestTargets(context,
                 data,
-                in finalTargets,
+                in bestTargets,
                 inputTargets: FlexTargetRepository.Instance.OfType<TTarget>().Targets(),
                 targetFilter);
         }
 
         public static int DetermineBestTargets<TContext, TTarget>(TContext context,
             [NotNull] IFlexData<TTarget> data,
-            in List<TTarget> finalTargets,
+            in List<TTarget> bestTargets,
             in List<TTarget> inputTargets,
             [NotNull] TargetFilter<TContext, TTarget> targetFilter)
             where TTarget : class, IFlexTarget
         {
             Assert.IsNotNull(data);
             Assert.IsNotNull(targetFilter);
-            finalTargets.Clear();
+            bestTargets.Clear();
             s_potentialTargets.Clear();
 
             // filter valid targets and score them
@@ -366,10 +366,10 @@ namespace Cyclic.FlexTargeting
             // send the filtered targets to the final targets list
             foreach (var targetItem in s_potentialTargets)
             {
-                finalTargets.Add(targetItem.flexTarget as TTarget);
+                bestTargets.Add(targetItem.flexTarget as TTarget);
             }
 
-            return finalTargets.Count;
+            return bestTargets.Count;
         }
 
         #endregion
