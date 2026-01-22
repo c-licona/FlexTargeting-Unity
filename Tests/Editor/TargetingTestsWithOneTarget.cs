@@ -48,14 +48,14 @@ public class TargetingTestsWithOneTarget
         _testData.MaxRange = maxRange;
 
         // Act
-        bool wasTargetFound = FlexTargetingCore.DetermineBestTarget(_testData, out var finalTarget, _inputTargets);
+        bool wasTargetFound = FlexTargetingCore.DetermineBestTarget(_testData, out var bestTarget, _inputTargets);
 
         // Assert
         Assert.That(wasTargetFound, Is.EqualTo(shouldFindTarget));
         if (shouldFindTarget)
-            Assert.IsNotNull(finalTarget);
+            Assert.IsNotNull(bestTarget);
         else
-            Assert.IsNull(finalTarget);
+            Assert.IsNull(bestTarget);
     }
 
     [TestCase(true, true)]
@@ -66,14 +66,14 @@ public class TargetingTestsWithOneTarget
         _testTarget.IsTargetValid = isTargetValid;
 
         // Act
-        bool wasTargetFound = FlexTargetingCore.DetermineBestTarget(_testData, out var finalTarget, _inputTargets);
+        bool wasTargetFound = FlexTargetingCore.DetermineBestTarget(_testData, out var bestTarget, _inputTargets);
 
         // Assert
         Assert.That(wasTargetFound, Is.EqualTo(shouldFindTarget));
         if (shouldFindTarget)
-            Assert.IsNotNull(finalTarget);
+            Assert.IsNotNull(bestTarget);
         else
-            Assert.IsNull(finalTarget);
+            Assert.IsNull(bestTarget);
     }
 
     [TestCase(true, true)]
@@ -84,15 +84,15 @@ public class TargetingTestsWithOneTarget
         _testTarget.FilterResult = shouldFilterPass;
 
         // Act
-        bool wasTargetFound = FlexTargetingCore.DetermineBestTarget(_testData, out var finalTarget, _inputTargets,
+        bool wasTargetFound = FlexTargetingCore.DetermineBestTarget(_testData, out var bestTarget, _inputTargets,
             target => target.FilterResult);
 
         // Assert
         Assert.That(wasTargetFound, Is.EqualTo(shouldFindTarget));
         if (shouldFindTarget)
-            Assert.IsNotNull(finalTarget);
+            Assert.IsNotNull(bestTarget);
         else
-            Assert.IsNull(finalTarget);
+            Assert.IsNull(bestTarget);
     }
 
     [TestCase(true, true)]
@@ -104,14 +104,14 @@ public class TargetingTestsWithOneTarget
         _contextFilterValue = shouldFilterPass;
 
         // Act
-        bool wasTargetFound = FlexTargetingCore.DetermineBestTarget(this, _testData, out var finalTarget,
+        bool wasTargetFound = FlexTargetingCore.DetermineBestTarget(this, _testData, out var bestTarget,
             _inputTargets, (context, target) => context._contextFilterValue && target.FilterResult);
 
         // Assert
         Assert.That(wasTargetFound, Is.EqualTo(shouldFindTarget));
         if (shouldFindTarget)
-            Assert.IsNotNull(finalTarget);
+            Assert.IsNotNull(bestTarget);
         else
-            Assert.IsNull(finalTarget);
+            Assert.IsNull(bestTarget);
     }
 }

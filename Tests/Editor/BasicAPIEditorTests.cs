@@ -41,78 +41,78 @@ public class BasicAPIEditorTests
     public void BasicAPI_Method02_TargetFound()
     {
         // Act
-        bool wasTargetFound = FlexTargetingCore.DetermineBestTarget(_testData, out var finalTarget, _inputTargets);
+        bool wasTargetFound = FlexTargetingCore.DetermineBestTarget(_testData, out var bestTarget, _inputTargets);
 
         // Assert
         Assert.IsTrue(wasTargetFound);
-        Assert.That(finalTarget, Is.EqualTo(_testTarget));
+        Assert.That(bestTarget, Is.EqualTo(_testTarget));
     }
 
     [Test]
     public void BasicAPI_Method04_TargetFound()
     {
         // Act
-        bool wasTargetFound = FlexTargetingCore.DetermineBestTarget(_testData, out var finalTarget, _inputTargets,
+        bool wasTargetFound = FlexTargetingCore.DetermineBestTarget(_testData, out var bestTarget, _inputTargets,
             target => target.IsTargetValid);
 
         // Assert
         Assert.IsTrue(wasTargetFound);
-        Assert.That(finalTarget, Is.EqualTo(_testTarget));
+        Assert.That(bestTarget, Is.EqualTo(_testTarget));
     }
 
     [Test]
     public void BasicAPI_Method06_TargetFound()
     {
         // Act
-        bool wasTargetFound = FlexTargetingCore.DetermineBestTarget(this, _testData, out var finalTarget,
+        bool wasTargetFound = FlexTargetingCore.DetermineBestTarget(this, _testData, out var bestTarget,
             _inputTargets, (context, target) => context._testTarget == target);
 
         // Assert
         Assert.IsTrue(wasTargetFound);
-        Assert.That(finalTarget, Is.EqualTo(_testTarget));
+        Assert.That(bestTarget, Is.EqualTo(_testTarget));
     }
 
     [Test]
     public void BasicAPI_Method08_TargetFound()
     {
         // Arrange
-        List<TestTarget> finalTargets = new();
+        List<TestTarget> bestTargets = new();
 
         // Act
-        int numTargets = FlexTargetingCore.DetermineBestTargets(_testData, finalTargets, _inputTargets);
+        int numTargets = FlexTargetingCore.DetermineBestTargets(_testData, bestTargets, _inputTargets);
 
         // Assert
         Assert.That(numTargets, Is.EqualTo(1));
-        Assert.That(finalTargets[0], Is.EqualTo(_testTarget));
+        Assert.That(bestTargets[0], Is.EqualTo(_testTarget));
     }
 
     [Test]
     public void BasicAPI_Method10_TargetFound()
     {
         // Arrange
-        List<TestTarget> finalTargets = new();
+        List<TestTarget> bestTargets = new();
 
         // Act
-        int numTargets = FlexTargetingCore.DetermineBestTargets(_testData, finalTargets, _inputTargets,
+        int numTargets = FlexTargetingCore.DetermineBestTargets(_testData, bestTargets, _inputTargets,
             target => target.IsTargetValid);
 
         // Assert
         Assert.That(numTargets, Is.EqualTo(1));
-        Assert.That(finalTargets[0], Is.EqualTo(_testTarget));
+        Assert.That(bestTargets[0], Is.EqualTo(_testTarget));
     }
 
     [Test]
     public void BasicAPI_Method12_TargetFound()
     {
         // Arrange
-        List<TestTarget> finalTargets = new();
+        List<TestTarget> bestTargets = new();
 
         // Act
-        int numTargets = FlexTargetingCore.DetermineBestTargets(this, _testData, finalTargets, _inputTargets,
+        int numTargets = FlexTargetingCore.DetermineBestTargets(this, _testData, bestTargets, _inputTargets,
             (context, target) => context._testTarget == target);
 
         // Assert
         Assert.That(numTargets, Is.EqualTo(1));
-        Assert.That(finalTargets[0], Is.EqualTo(_testTarget));
+        Assert.That(bestTargets[0], Is.EqualTo(_testTarget));
     }
 }
