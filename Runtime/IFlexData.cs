@@ -11,18 +11,18 @@ namespace Cyclic.FlexTargeting
     /// </para>
     /// <para>
     /// The <see cref="ScoreTarget"/> method is the heart of this interface. It determines how each target is scored
-    /// against each other in order to determine the "final" or "best" target.
+    /// against each other in order to determine the "best" target.
     /// </para>
     /// </summary>
-    /// <example>
-    /// The 2 most common examples of implementations for this interface are DirectionTargetingData and
+    /// <remarks>
+    /// The 2 most common implementations for this interface are DirectionTargetingData and
     /// RangeTargetingData which are located in the Builtin folder for this package.
-    /// </example>
+    /// </remarks>
     public interface IFlexData<in TTarget> where TTarget : IFlexTarget
     {
         /// <summary>
-        /// Get the origin of the targeter that is performing the targeting. Only targets that are close enough to this
-        /// position value (as determined by <see cref="MaxRange"/>) will be considered in the targeting process.
+        /// Get the origin of the targeter that is performing the targeting. This is typically used for determining
+        /// whether a target is in range, and serving as the line-of-sight origin.
         /// </summary>
         Vector3 TargeterPosition { get; }
 
@@ -90,9 +90,9 @@ namespace Cyclic.FlexTargeting
         /// </summary>
         /// <param name="target">The current target being scored by a <see cref="FlexTargetingCore"/> method.</param>
         /// <param name="score">The score to assign to the current <see cref="target"/></param>
-        /// <returns>The return bool value is used to filter out certain targets. If False is returned, the target will
-        /// be culled out. If True is returned, the target will be considered as a potential target with the output
-        /// score being used in the sorting process.</returns>
+        /// <returns>The return bool value is used to further filter out certain targets. If False is returned, the
+        /// target will be culled out. If True is returned, the target will be considered as a potential target with
+        /// the output score being used in the sorting process.</returns>
         bool ScoreTarget(TTarget target, out float score);
     }
 }
