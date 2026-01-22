@@ -123,8 +123,7 @@ namespace Cyclic.FlexTargeting
             // filter valid targets and score them
             foreach (var flexTarget in inputTargets)
             {
-                if (Vector3.Distance(data.TargeterPosition, flexTarget.TargetPosition) <= data.MaxRange &&
-                    flexTarget.IsTargetValid &&
+                if (data.DoesPassFilter(flexTarget) &&
                     targetFilter.Invoke(flexTarget) &&
                     data.ScoreTarget(flexTarget, out float score))
                 {
@@ -222,8 +221,7 @@ namespace Cyclic.FlexTargeting
             // filter valid targets and score them
             foreach (var flexTarget in inputTargets)
             {
-                if (Vector3.Distance(data.TargeterPosition, flexTarget.TargetPosition) <= data.MaxRange &&
-                    flexTarget.IsTargetValid &&
+                if (data.DoesPassFilter(flexTarget) &&
                     targetFilter.Invoke(context, flexTarget) &&
                     data.ScoreTarget(flexTarget, out float score))
                 {
@@ -300,8 +298,7 @@ namespace Cyclic.FlexTargeting
             // filter valid targets and score them
             foreach (var flexTarget in inputTargets)
             {
-                if (Vector3.Distance(data.TargeterPosition, flexTarget.TargetPosition) <= data.MaxRange &&
-                    flexTarget.IsTargetValid &&
+                if (data.DoesPassFilter(flexTarget) &&
                     targetFilter.Invoke(flexTarget) &&
                     data.ScoreTarget(flexTarget, out float score) &&
                     !IsTargetLosBlocked(data, flexTarget))
@@ -354,8 +351,7 @@ namespace Cyclic.FlexTargeting
             // filter valid targets and score them
             foreach (var flexTarget in inputTargets)
             {
-                if (Vector3.Distance(data.TargeterPosition, flexTarget.TargetPosition) <= data.MaxRange &&
-                    flexTarget.IsTargetValid &&
+                if (data.DoesPassFilter(flexTarget) &&
                     targetFilter.Invoke(context, flexTarget) &&
                     data.ScoreTarget(flexTarget, out float score) &&
                     !IsTargetLosBlocked(data, flexTarget))

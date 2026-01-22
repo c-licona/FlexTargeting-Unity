@@ -65,6 +65,24 @@ namespace Cyclic.FlexTargeting
         Comparison<FlexTargetListItem> ScoreComparer => FlexTargetingExtras.SortBySmallestScore;
 
         /// <summary>
+        /// When searching through the list of all potential targets, this filter decides whether the target should be
+        /// considered for continuing through the process of finding the best target. The filter process typically gets
+        /// progressively more and more complex, with this filter acting as the first line of defense. Because of that,
+        /// this filter is usually the least computationally complex.
+        /// </summary>
+        /// <remarks>
+        /// The default and most common implementation of this method is to check 2 things: First, check if the target
+        /// is anywhere near the targeter. Second, check if the target itself is even valid.
+        /// </remarks>
+        /// <param name="target">The target to evaluate</param>
+        /// <returns>Returns true if the target should continue through the determination process. Returns false if
+        /// the target should be skipped.</returns>
+        bool DoesPassFilter(TTarget target)
+        {
+            return Vector3.Distance(TargeterPosition, target.TargetPosition) <= MaxRange && target.IsTargetValid;
+        }
+
+        /// <summary>
         /// This is the heart of the <see cref="FlexTargetingCore"/> methods. Implementations of this method evaluate
         /// the provided <paramref name="flexTarget"/> and assign a score to that particular target. The score value
         /// is then used within the core methods to sort the targets by the best score. See <see cref="ScoreComparer"/>
