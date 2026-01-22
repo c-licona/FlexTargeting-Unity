@@ -65,7 +65,7 @@ namespace Cyclic.FlexTargeting.Builtin
             }
         }
 
-        public bool ScoreTarget(IFlexTarget flexTarget, out float score)
+        public bool ScoreTarget(IFlexTarget target, out float score)
         {
             /*
              * The angle between the targeting origin direction and the vector from origin to target is used as the
@@ -75,7 +75,7 @@ namespace Cyclic.FlexTargeting.Builtin
              */
             Vector3 oPos = TargeterPosition;
             Vector3 oForward = TargeterDirection;
-            Vector3 targetPos = flexTarget.TargetPosition;
+            Vector3 targetPos = target.TargetPosition;
 
             score = Vector3.Angle(targetPos - oPos, oForward);
             return score <= _halfAngle;

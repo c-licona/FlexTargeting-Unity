@@ -41,11 +41,11 @@ namespace Cyclic.FlexTargeting.Builtin
         /// score ends up being lower than all of the targets in the first group. T4 would be the next best target but
         /// it is outside of the half angle range so it gets culled out as an invalid target. The last target is T6.
         /// </example>
-        public bool ScoreTarget(IFlexTarget flexTarget, out float score)
+        public bool ScoreTarget(IFlexTarget target, out float score)
         {
             Vector3 oPos = TargeterPosition;
             Vector3 oForward = _targetingOrigin.forward;
-            Vector3 targetPos = flexTarget.TargetPosition;
+            Vector3 targetPos = target.TargetPosition;
 
             float distance = Vector3.Distance(oPos, targetPos);
             int band = Mathf.FloorToInt(distance / _rangeBandWidth);

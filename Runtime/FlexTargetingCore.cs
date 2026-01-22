@@ -121,13 +121,13 @@ namespace Cyclic.FlexTargeting
             s_potentialTargets.Clear();
 
             // filter valid targets and score them
-            foreach (var flexTarget in inputTargets)
+            foreach (var target in inputTargets)
             {
-                if (data.DoesPassFilter(flexTarget) &&
-                    targetFilter.Invoke(flexTarget) &&
-                    data.ScoreTarget(flexTarget, out float score))
+                if (data.DoesPassFilter(target) &&
+                    targetFilter.Invoke(target) &&
+                    data.ScoreTarget(target, out float score))
                 {
-                    s_potentialTargets.Add(new FlexTargetListItem() { flexTarget = flexTarget, score = score });
+                    s_potentialTargets.Add(new FlexTargetListItem() { flexTarget = target, score = score });
                 }
             }
 
@@ -219,13 +219,13 @@ namespace Cyclic.FlexTargeting
             s_potentialTargets.Clear();
 
             // filter valid targets and score them
-            foreach (var flexTarget in inputTargets)
+            foreach (var target in inputTargets)
             {
-                if (data.DoesPassFilter(flexTarget) &&
-                    targetFilter.Invoke(context, flexTarget) &&
-                    data.ScoreTarget(flexTarget, out float score))
+                if (data.DoesPassFilter(target) &&
+                    targetFilter.Invoke(context, target) &&
+                    data.ScoreTarget(target, out float score))
                 {
-                    s_potentialTargets.Add(new FlexTargetListItem() { flexTarget = flexTarget, score = score });
+                    s_potentialTargets.Add(new FlexTargetListItem() { flexTarget = target, score = score });
                 }
             }
 
@@ -296,14 +296,14 @@ namespace Cyclic.FlexTargeting
             s_potentialTargets.Clear();
 
             // filter valid targets and score them
-            foreach (var flexTarget in inputTargets)
+            foreach (var target in inputTargets)
             {
-                if (data.DoesPassFilter(flexTarget) &&
-                    targetFilter.Invoke(flexTarget) &&
-                    data.ScoreTarget(flexTarget, out float score) &&
-                    !IsTargetLosBlocked(data, flexTarget))
+                if (data.DoesPassFilter(target) &&
+                    targetFilter.Invoke(target) &&
+                    data.ScoreTarget(target, out float score) &&
+                    !IsTargetLosBlocked(data, target))
                 {
-                    s_potentialTargets.Add(new FlexTargetListItem() { flexTarget = flexTarget, score = score });
+                    s_potentialTargets.Add(new FlexTargetListItem() { flexTarget = target, score = score });
                 }
             }
 
@@ -349,14 +349,14 @@ namespace Cyclic.FlexTargeting
             s_potentialTargets.Clear();
 
             // filter valid targets and score them
-            foreach (var flexTarget in inputTargets)
+            foreach (var target in inputTargets)
             {
-                if (data.DoesPassFilter(flexTarget) &&
-                    targetFilter.Invoke(context, flexTarget) &&
-                    data.ScoreTarget(flexTarget, out float score) &&
-                    !IsTargetLosBlocked(data, flexTarget))
+                if (data.DoesPassFilter(target) &&
+                    targetFilter.Invoke(context, target) &&
+                    data.ScoreTarget(target, out float score) &&
+                    !IsTargetLosBlocked(data, target))
                 {
-                    s_potentialTargets.Add(new FlexTargetListItem() { flexTarget = flexTarget, score = score });
+                    s_potentialTargets.Add(new FlexTargetListItem() { flexTarget = target, score = score });
                 }
             }
 

@@ -84,15 +84,15 @@ namespace Cyclic.FlexTargeting
 
         /// <summary>
         /// This is the heart of the <see cref="FlexTargetingCore"/> methods. Implementations of this method evaluate
-        /// the provided <paramref name="flexTarget"/> and assign a score to that particular target. The score value
+        /// the provided <paramref name="target"/> and assign a score to that particular target. The score value
         /// is then used within the core methods to sort the targets by the best score. See <see cref="ScoreComparer"/>
         /// to change whether the targets have their scores sorted by smallest or largest score.
         /// </summary>
-        /// <param name="flexTarget">The current target being scored by a <see cref="FlexTargetingCore"/> method.</param>
-        /// <param name="score">The score to assign to the current <see cref="flexTarget"/></param>
+        /// <param name="target">The current target being scored by a <see cref="FlexTargetingCore"/> method.</param>
+        /// <param name="score">The score to assign to the current <see cref="target"/></param>
         /// <returns>The return bool value is used to filter out certain targets. If False is returned, the target will
         /// be culled out. If True is returned, the target will be considered as a potential target with the output
         /// score being used in the sorting process.</returns>
-        bool ScoreTarget(TTarget flexTarget, out float score);
+        bool ScoreTarget(TTarget target, out float score);
     }
 }

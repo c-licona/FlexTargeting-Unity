@@ -25,13 +25,13 @@ namespace Cyclic.FlexTargeting.Builtin
         public float LosBufferRadius { get => _losBufferRadius; set => _losBufferRadius = value; }
         public LayerMask LosLayerMask { get => _losLayerMask; set => _losLayerMask = value; }
 
-        public bool ScoreTarget(IFlexTarget flexTarget, out float score)
+        public bool ScoreTarget(IFlexTarget target, out float score)
         {
             /*
              * The distance between the target and the origin is used as the targeting score. Only targets that are
              * within the max range are accepted as valid targets, the rest are filtered out
              */
-            score = Vector3.Distance(TargeterPosition, flexTarget.TargetPosition);
+            score = Vector3.Distance(TargeterPosition, target.TargetPosition);
             return score <= _maxRange; // this should always be true since this is only being called on in range targets
         }
     }

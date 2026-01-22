@@ -18,9 +18,9 @@ public class BasicAPIEditorTests
         public float MaxRange => 10.0f;
         public LayerMask LosLayerMask => FlexTargetingExtras.NoLayers;
 
-        public bool ScoreTarget(IFlexTarget flexTarget, out float score)
+        public bool ScoreTarget(IFlexTarget target, out float score)
         {
-            score = Vector3.Distance(TargeterPosition, flexTarget.TargetPosition);
+            score = Vector3.Distance(TargeterPosition, target.TargetPosition);
             return score <= MaxRange;
         }
     }
