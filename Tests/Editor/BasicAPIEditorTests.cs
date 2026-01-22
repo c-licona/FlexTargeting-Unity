@@ -41,7 +41,7 @@ public class BasicAPIEditorTests
     public void BasicAPI_Method02_TargetFound()
     {
         // Act
-        bool wasTargetFound = FlexTargetingCore.DetermineFinalTarget(_testData, out var finalTarget, _inputTargets);
+        bool wasTargetFound = FlexTargetingCore.DetermineBestTarget(_testData, out var finalTarget, _inputTargets);
 
         // Assert
         Assert.IsTrue(wasTargetFound);
@@ -52,7 +52,7 @@ public class BasicAPIEditorTests
     public void BasicAPI_Method04_TargetFound()
     {
         // Act
-        bool wasTargetFound = FlexTargetingCore.DetermineFinalTarget(_testData, out var finalTarget, _inputTargets,
+        bool wasTargetFound = FlexTargetingCore.DetermineBestTarget(_testData, out var finalTarget, _inputTargets,
             target => target.IsTargetValid);
 
         // Assert
@@ -64,7 +64,7 @@ public class BasicAPIEditorTests
     public void BasicAPI_Method06_TargetFound()
     {
         // Act
-        bool wasTargetFound = FlexTargetingCore.DetermineFinalTarget(this, _testData, out var finalTarget,
+        bool wasTargetFound = FlexTargetingCore.DetermineBestTarget(this, _testData, out var finalTarget,
             _inputTargets, (context, target) => context._testTarget == target);
 
         // Assert
@@ -79,7 +79,7 @@ public class BasicAPIEditorTests
         List<TestTarget> finalTargets = new();
 
         // Act
-        int numTargets = FlexTargetingCore.DetermineFinalTargets(_testData, finalTargets, _inputTargets);
+        int numTargets = FlexTargetingCore.DetermineBestTargets(_testData, finalTargets, _inputTargets);
 
         // Assert
         Assert.That(numTargets, Is.EqualTo(1));
@@ -93,7 +93,7 @@ public class BasicAPIEditorTests
         List<TestTarget> finalTargets = new();
 
         // Act
-        int numTargets = FlexTargetingCore.DetermineFinalTargets(_testData, finalTargets, _inputTargets,
+        int numTargets = FlexTargetingCore.DetermineBestTargets(_testData, finalTargets, _inputTargets,
             target => target.IsTargetValid);
 
         // Assert
@@ -108,7 +108,7 @@ public class BasicAPIEditorTests
         List<TestTarget> finalTargets = new();
 
         // Act
-        int numTargets = FlexTargetingCore.DetermineFinalTargets(this, _testData, finalTargets, _inputTargets,
+        int numTargets = FlexTargetingCore.DetermineBestTargets(this, _testData, finalTargets, _inputTargets,
             (context, target) => context._testTarget == target);
 
         // Assert
