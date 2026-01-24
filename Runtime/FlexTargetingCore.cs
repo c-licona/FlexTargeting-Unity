@@ -39,6 +39,9 @@ namespace Cyclic.FlexTargeting
     /// flexibility in the delegates that can be used.</typeparam>
     public delegate bool TargetFilter<in TContext, in TTarget>(TContext context, TTarget target) where TTarget : IFlexTarget;
 
+    /// <summary>
+    /// Contains some useful extras
+    /// </summary>
     public static class FlexTargetingExtras
     {
         /// <summary>
@@ -50,6 +53,9 @@ namespace Cyclic.FlexTargeting
         public static readonly Comparison<FlexTargetListItem> SortByLargestScore = (x, y) => y.score.CompareTo(x.score);
     }
 
+    /// <summary>
+    /// Contains the core methods of the flex targeting package: DetermineBestTarget and DetermineBestTargets
+    /// </summary>
     public static class FlexTargetingCore
     {
         private static readonly List<FlexTargetListItem> s_potentialTargets = new();
