@@ -7,7 +7,7 @@ namespace Cyclic.FlexTargeting
 {
     public interface IFlexTargetRepository<T> : IInternalFlexTargetRepository where T : IFlexTarget
     {
-        List<T> Targets();
+        List<T> Targets { get; }
         void AddTarget(T targetToAdd);
         void RemoveTarget(T targetToRemove);
     }

@@ -65,7 +65,7 @@ namespace Cyclic.FlexTargeting
         {
             return DetermineBestTarget(data,
                 out bestTarget,
-                inputTargets: FlexTargetRepository.Instance.OfType<TTarget>().Targets(),
+                inputTargets: FlexTargetRepository.Instance.OfType<TTarget>().Targets,
                 s_nullFilter);
         }
 
@@ -89,7 +89,7 @@ namespace Cyclic.FlexTargeting
         {
             return DetermineBestTarget(data,
                 out bestTarget,
-                inputTargets: FlexTargetRepository.Instance.OfType<TTarget>().Targets(),
+                inputTargets: FlexTargetRepository.Instance.OfType<TTarget>().Targets,
                 targetFilter);
         }
 
@@ -164,7 +164,7 @@ namespace Cyclic.FlexTargeting
             return DetermineBestTarget(context,
                 data,
                 out bestTarget,
-                inputTargets: FlexTargetRepository.Instance.OfType<TTarget>().Targets(),
+                inputTargets: FlexTargetRepository.Instance.OfType<TTarget>().Targets,
                 targetFilter);
         }
 
@@ -258,7 +258,7 @@ namespace Cyclic.FlexTargeting
         {
             return DetermineBestTargets(data,
                 in bestTargets,
-                inputTargets: FlexTargetRepository.Instance.OfType<TTarget>().Targets(),
+                inputTargets: FlexTargetRepository.Instance.OfType<TTarget>().Targets,
                 s_nullFilter);
         }
 
@@ -280,7 +280,7 @@ namespace Cyclic.FlexTargeting
         {
             return DetermineBestTargets(data,
                 in bestTargets,
-                inputTargets: FlexTargetRepository.Instance.OfType<TTarget>().Targets(),
+                inputTargets: FlexTargetRepository.Instance.OfType<TTarget>().Targets,
                 targetFilter);
         }
 
@@ -332,7 +332,7 @@ namespace Cyclic.FlexTargeting
             return DetermineBestTargets(context,
                 data,
                 in bestTargets,
-                inputTargets: FlexTargetRepository.Instance.OfType<TTarget>().Targets(),
+                inputTargets: FlexTargetRepository.Instance.OfType<TTarget>().Targets,
                 targetFilter);
         }
 

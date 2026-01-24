@@ -13,7 +13,7 @@ namespace Cyclic.FlexTargeting.Internal
     {
         private readonly List<T> _targets = new();
 
-        public List<T> Targets() => _targets;
+        public List<T> Targets => _targets;
         public void AddTarget(T targetToAdd) => _targets.Add(targetToAdd);
         public void RemoveTarget(T targetToRemove) => _targets.Remove(targetToRemove);
 
