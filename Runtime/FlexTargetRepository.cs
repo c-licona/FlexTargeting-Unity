@@ -7,8 +7,21 @@ namespace Cyclic.FlexTargeting
 {
     public interface IFlexTargetRepository<T> : IInternalFlexTargetRepository where T : IFlexTarget
     {
+        /// <summary>
+        /// Get the list of all targets currently in the repository
+        /// </summary>
         List<T> Targets { get; }
+
+        /// <summary>
+        /// Add the target to the repository
+        /// </summary>
+        /// <param name="targetToAdd">The target to add</param>
         void AddTarget(T targetToAdd);
+
+        /// <summary>
+        /// Remove the target from the repository
+        /// </summary>
+        /// <param name="targetToRemove">The target to remove</param>
         void RemoveTarget(T targetToRemove);
     }
 
@@ -65,6 +78,11 @@ namespace Cyclic.FlexTargeting
         private static FlexTargetRepository s_instance = null;
         private bool _isApplicationQuitting = false;
 
+        /// <summary>
+        /// Return the singleton instance of the repository. If an instance hasn't been made yet then first an instance
+        /// will be searched for in the active scenes. If an instance is still not found then a new one will be created
+        /// and added to "Dont Destroy on Load".
+        /// </summary>
         public static FlexTargetRepository Instance
         {
             get
@@ -84,6 +102,13 @@ namespace Cyclic.FlexTargeting
             }
         }
 
+        /// <summary>
+        /// Try to get the singleton instance of this class only if the instance exists and the application is still
+        /// running. This method will not cause a new instance to be made if one doesn't exist.
+        /// </summary>
+        /// <param name="outInstance">The instance if there is one available at this time. Will be null if the method
+        /// returns false.</param>
+        /// <returns>Returns true if the instance was returned. Returns false otherwise.</returns>
         public static bool TryGetInstance(out FlexTargetRepository outInstance)
         {
             if (s_instance != null && !s_instance._isApplicationQuitting)
