@@ -21,11 +21,10 @@ namespace Cyclic.FlexTargeting
 
         protected virtual void OnDestroy()
         {
-            // Use TryGetInstance which will not instantiate a new instance if it is null. This will avoid issues
-            // when the application is quitting
-            if (FlexTargetRepository.Instance.TryOfType<TSelf>(out var outInstance))
+            if (FlexTargetRepository.TryGetInstance(out var repository) &&
+                repository.TryOfType<TSelf>(out var targetRepository))
             {
-                outInstance.RemoveTarget(this as TSelf);
+                targetRepository.RemoveTarget(this as TSelf);
             }
         }
 

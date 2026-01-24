@@ -1,35 +1,57 @@
-﻿using Cyclic.FlexTargeting.Utility;
+﻿using Cyclic.FlexTargeting.Internal;
 using System;
 using System.Collections.Generic;
 using UnityEngine;
 
 namespace Cyclic.FlexTargeting
 {
-    public interface IFlexTargetRepository<T> : IDisposable where T : IFlexTarget
+    public interface IFlexTargetRepository<T> : IInternalFlexTargetRepository where T : IFlexTarget
     {
         List<T> Targets();
         void AddTarget(T targetToAdd);
         void RemoveTarget(T targetToRemove);
     }
 
-    public class FlexTargetRepository : PersistentSingleton<FlexTargetRepository>
+    /// <summary>
+    /// <para>
+    /// A repository of repositories. From this component, repositories of specific types of targets can be acquired,
+    /// added to, and removed from. Use the <see cref="OfType{T}"/> method to get a repository of a specific target type
+    /// </para>
+    /// <para>
+    /// Persistent Singleton pattern inspired by:
+    /// https://github.com/adammyhre/Unity-Utils/blob/master/UnityUtils/Scripts/Singleton/PersistentSingleton.cs
+    /// </para>
+    /// </summary>
+    public class FlexTargetRepository : MonoBehaviour
     {
-        private Dictionary<Type, IDisposable> _repositories = new();
+        private readonly Dictionary<Type, IInternalFlexTargetRepository> _repositories = new();
 
+        /// <summary>
+        /// Return a repository containing targets of the specified type.
+        /// </summary>
+        /// <typeparam name="T">The type of target to get a repository for.</typeparam>
+        /// <returns>Returns the repository containing the targets and methods for adding and removing targets from the
+        /// repository</returns>
         public IFlexTargetRepository<T> OfType<T>() where T : class, IFlexTarget
         {
             if (!_repositories.ContainsKey(typeof(T)))
             {
-                IFlexTargetRepository<T> repository = new InternalFlexTargetRepository<T>();
-                _repositories.Add(typeof(T), repository);
+                var newInternalRepository = new InternalFlexTargetRepository<T>();
+                _repositories.Add(typeof(T), newInternalRepository);
             }
 
             return InternalFlexTargetRepository<T>.Instance;
         }
 
+        /// <summary>
+        /// Only returns the repository if the application is still running.
+        /// </summary>
+        /// <param name="repository">The repository containing targets of the specified type.</param>
+        /// <typeparam name="T">The type of target to get a repository for.</typeparam>
+        /// <returns>Returns true if the repository could be returned at this time. Returns false otherwise.</returns>
         public bool TryOfType<T>(out IFlexTargetRepository<T> repository) where T : class, IFlexTarget
         {
-            if (!IsApplicationQuitting)
+            if (!_isApplicationQuitting)
             {
                 repository = OfType<T>();
                 return true;
@@ -39,49 +61,34 @@ namespace Cyclic.FlexTargeting
             return false;
         }
 
-        protected override void OnApplicationQuit()
+        public bool autoUnparentOnAwake = true;
+        private static FlexTargetRepository s_instance = null;
+        private bool _isApplicationQuitting = false;
+
+        public static FlexTargetRepository Instance
         {
-            base.OnApplicationQuit();
-            foreach (var repository in _repositories)
+            get
             {
-                repository.Value.Dispose();
+                if (s_instance == null)
+                {
+                    s_instance = FindAnyObjectByType<FlexTargetRepository>(FindObjectsInactive.Exclude);
+                    if (s_instance == null)
+                    {
+                        var go = new GameObject("FlexTargetRepository Auto-Generated");
+                        s_instance = go.AddComponent<FlexTargetRepository>();
+                        DontDestroyOnLoad(go);
+                    }
+                }
+
+                return s_instance;
             }
         }
-    }
 
-    public class InternalFlexTargetRepository<T> : IFlexTargetRepository<T>
-        where T : class, IFlexTarget
-    {
-        private List<T> _targets = new();
-
-        public List<T> Targets() => _targets;
-        public void AddTarget(T targetToAdd) => _targets.Add(targetToAdd);
-        public void RemoveTarget(T targetToRemove) => _targets.Remove(targetToRemove);
-
-        public void Dispose()
+        public static bool TryGetInstance(out FlexTargetRepository outInstance)
         {
-            _isApplicationQuitting = true;
-            _targets.Clear();
-        }
-
-        private static InternalFlexTargetRepository<T> instance = null;
-        private static bool _isApplicationQuitting = false;
-
-        public static bool IsApplicationQuitting => _isApplicationQuitting;
-        public static bool HasInstance => instance != null;
-
-        /// <summary>
-        /// Tries to get the current instance only if it currently exists and the application isn't quitting. This
-        /// method call will not trigger the creation of a new instance. This is most useful if theres a possibility
-        /// that the application is quitting.
-        /// </summary>
-        /// <param name="outInstance">The current singleton instance</param>
-        /// <returns>Returns true if there is currently an instance and the application isn't quitting.</returns>
-        public static bool TryGetInstance(out InternalFlexTargetRepository<T> outInstance)
-        {
-            if (HasInstance && !IsApplicationQuitting)
+            if (s_instance != null && !s_instance._isApplicationQuitting)
             {
-                outInstance = instance;
+                outInstance = s_instance;
                 return true;
             }
 
@@ -89,39 +96,40 @@ namespace Cyclic.FlexTargeting
             return false;
         }
 
-        public static InternalFlexTargetRepository<T> Instance
+        private void Awake()
         {
-            get
+            if (!Application.isPlaying)
+                return;
+
+            if (autoUnparentOnAwake)
+                transform.SetParent(null);
+
+            if (s_instance == null)
             {
-                // do not attempt to create a new instance is the application is quitting
-                if (instance == null && !IsApplicationQuitting)
-                {
-                    instance = new InternalFlexTargetRepository<T>();
-                }
-
-                return instance;
-            }
-        }
-
-        public InternalFlexTargetRepository() => InitializeSingleton();
-
-        private void InitializeSingleton()
-        {
-            if (_isApplicationQuitting) return;
-
-            if (instance == null)
-            {
-                instance = this;
+                s_instance = this;
+                DontDestroyOnLoad(gameObject);
             }
             else
             {
-                if (instance != this)
+                if (s_instance != this)
                 {
-                    // Destroy(gameObject);
-                    this.Dispose();
-                    Debug.Log("Destroyed another copy of this singleton");
+                    Destroy(gameObject);
+                    Debug.Log($"Destroyed duplicate FlexTargetRepository because there is already an instance: " +
+                              $"[{s_instance}]", this);
                 }
             }
+        }
+
+        private void OnApplicationQuit()
+        {
+            _isApplicationQuitting = true;
+
+            foreach (var repository in _repositories.Values)
+            {
+                repository.Cleanup();
+            }
+
+            _repositories.Clear();
         }
     }
 }
