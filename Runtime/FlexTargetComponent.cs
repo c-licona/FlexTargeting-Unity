@@ -14,17 +14,57 @@ namespace Cyclic.FlexTargeting
     /// </example>
     public abstract class FlexTargetComponent<TSelf> : MonoBehaviour, IFlexTarget where TSelf : FlexTargetComponent<TSelf>
     {
+        private enum RegisterWhen
+        {
+            [Tooltip("This target gets registered to the repository on Awake, and unregistered on Destroy.")]
+            OnAwake,
+            [Tooltip("This target gets registered to the repository on Enable, and unregistered on Disable.")]
+            OnEnable,
+            [Tooltip("This target must be registered and unregistered from the repository manually.")]
+            Manual
+        }
+
+        [Header("Settings")]
+        [Tooltip("Set if and when this target automatically registers itself with the target repository.")]
+        [SerializeField] private RegisterWhen _registerWhen = RegisterWhen.OnAwake;
+
         protected virtual void Awake()
         {
-            FlexTargetRepository.Instance.OfType<TSelf>().AddTarget(this as TSelf);
+            if (_registerWhen == RegisterWhen.OnAwake)
+            {
+                FlexTargetRepository.Instance.OfType<TSelf>().AddTarget(this as TSelf);
+            }
         }
 
         protected virtual void OnDestroy()
         {
-            if (FlexTargetRepository.TryGetInstance(out var repository) &&
-                repository.TryOfType<TSelf>(out var targetRepository))
+            if (_registerWhen == RegisterWhen.OnAwake)
             {
-                targetRepository.RemoveTarget(this as TSelf);
+                if (FlexTargetRepository.TryGetInstance(out var repository) &&
+                    repository.TryOfType<TSelf>(out var targetRepository))
+                {
+                    targetRepository.RemoveTarget(this as TSelf);
+                }
+            }
+        }
+
+        protected virtual void OnEnable()
+        {
+            if (_registerWhen == RegisterWhen.OnEnable)
+            {
+                FlexTargetRepository.Instance.OfType<TSelf>().AddTarget(this as TSelf);
+            }
+        }
+
+        protected virtual void OnDisable()
+        {
+            if (_registerWhen == RegisterWhen.OnEnable)
+            {
+                if (FlexTargetRepository.TryGetInstance(out var repository) &&
+                    repository.TryOfType<TSelf>(out var targetRepository))
+                {
+                    targetRepository.RemoveTarget(this as TSelf);
+                }
             }
         }
 
