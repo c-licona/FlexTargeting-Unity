@@ -42,7 +42,7 @@ public class TargetingTestsWithOneTarget
 
     [TestCase(10.0f, true)]
     [TestCase(0.5f, false)]
-    public void Method2_IsTargetInRange(float maxRange, bool shouldFindTarget)
+    public void Targeting_Method2_IsTargetInRange(float maxRange, bool shouldFindTarget)
     {
         // Arrange
         _testData.MaxRange = maxRange;
@@ -60,7 +60,7 @@ public class TargetingTestsWithOneTarget
 
     [TestCase(true, true)]
     [TestCase(false, false)]
-    public void Method2_IsTargetValid(bool isTargetValid, bool shouldFindTarget)
+    public void Targeting_Method2_IsTargetValid(bool isTargetValid, bool shouldFindTarget)
     {
         // Arrange
         _testTarget.IsTargetValid = isTargetValid;
@@ -78,7 +78,7 @@ public class TargetingTestsWithOneTarget
 
     [TestCase(true, true)]
     [TestCase(false, false)]
-    public void Method4_TestFilter(bool shouldFilterPass, bool shouldFindTarget)
+    public void Targeting_Method4_TestFilter(bool shouldFilterPass, bool shouldFindTarget)
     {
         // Arrange
         _testTarget.FilterResult = shouldFilterPass;
@@ -97,7 +97,7 @@ public class TargetingTestsWithOneTarget
 
     [TestCase(true, true)]
     [TestCase(false, false)]
-    public void Method6_TestContext(bool shouldFilterPass, bool shouldFindTarget)
+    public void Targeting_Method6_TestContext(bool shouldFilterPass, bool shouldFindTarget)
     {
         // Arrange
         _testTarget.FilterResult = shouldFilterPass;
