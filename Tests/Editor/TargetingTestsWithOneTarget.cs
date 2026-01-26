@@ -48,7 +48,7 @@ public class TargetingTestsWithOneTarget
         _testData.MaxRange = maxRange;
 
         // Act
-        bool wasTargetFound = FlexTargetingCore.DetermineBestTarget(_testData, out var bestTarget, _inputTargets);
+        bool wasTargetFound = FlexTargetingCore.DetermineBestTarget(_testData, out TestTarget bestTarget, _inputTargets);
 
         // Assert
         Assert.That(wasTargetFound, Is.EqualTo(shouldFindTarget));
@@ -66,7 +66,7 @@ public class TargetingTestsWithOneTarget
         _testTarget.IsTargetValid = isTargetValid;
 
         // Act
-        bool wasTargetFound = FlexTargetingCore.DetermineBestTarget(_testData, out var bestTarget, _inputTargets);
+        bool wasTargetFound = FlexTargetingCore.DetermineBestTarget(_testData, out TestTarget bestTarget, _inputTargets);
 
         // Assert
         Assert.That(wasTargetFound, Is.EqualTo(shouldFindTarget));
@@ -84,7 +84,7 @@ public class TargetingTestsWithOneTarget
         _testTarget.FilterResult = shouldFilterPass;
 
         // Act
-        bool wasTargetFound = FlexTargetingCore.DetermineBestTarget(_testData, out var bestTarget, _inputTargets,
+        bool wasTargetFound = FlexTargetingCore.DetermineBestTarget(_testData, out TestTarget bestTarget, _inputTargets,
             target => target.FilterResult);
 
         // Assert
@@ -104,7 +104,7 @@ public class TargetingTestsWithOneTarget
         _contextFilterValue = shouldFilterPass;
 
         // Act
-        bool wasTargetFound = FlexTargetingCore.DetermineBestTarget(this, _testData, out var bestTarget,
+        bool wasTargetFound = FlexTargetingCore.DetermineBestTarget(this, _testData, out TestTarget bestTarget,
             _inputTargets, (context, target) => context._contextFilterValue && target.FilterResult);
 
         // Assert

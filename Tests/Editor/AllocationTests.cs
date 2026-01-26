@@ -86,7 +86,7 @@ public class AllocationTests
         for (int i = 0; i < _numIterations; i++)
         {
             var ac = new AllocCounter();
-            FlexTargetingCore.DetermineBestTarget(_testData, out _, _inputTargets);
+            FlexTargetingCore.DetermineBestTarget<TestTarget>(_testData, out _, _inputTargets);
             int allocCount = ac.Stop();
 
             if (i == 0) _firstAllocCount = allocCount;
@@ -108,7 +108,7 @@ public class AllocationTests
         for (int i = 0; i < _numIterations; i++)
         {
             var ac = new AllocCounter();
-            FlexTargetingCore.DetermineBestTarget(_testData, out _, _inputTargets, TargetFilter);
+            FlexTargetingCore.DetermineBestTarget<TestTarget>(_testData, out _, _inputTargets, TargetFilter);
             int allocCount = ac.Stop();
 
             _allocOnAllIterations &= allocCount != 0;
@@ -134,7 +134,7 @@ public class AllocationTests
         for (int i = 0; i < _numIterations; i++)
         {
             var ac = new AllocCounter();
-            FlexTargetingCore.DetermineBestTarget(this, _testData, out _, _inputTargets,
+            FlexTargetingCore.DetermineBestTarget(this, _testData, out TestTarget _, _inputTargets,
                 (context, target) => context.TargetFilter(target));
             int allocCount = ac.Stop();
 
@@ -158,7 +158,7 @@ public class AllocationTests
         for (int i = 0; i < _numIterations; i++)
         {
             var ac = new AllocCounter();
-            FlexTargetingCore.DetermineBestTarget(_testData, out _, _inputTargets, StaticTargetFilter);
+            FlexTargetingCore.DetermineBestTarget<TestTarget>(_testData, out _, _inputTargets, StaticTargetFilter);
             int allocCount = ac.Stop();
 
             _allocOnAllIterations &= allocCount != 0;
@@ -181,7 +181,8 @@ public class AllocationTests
         for (int i = 0; i < _numIterations; i++)
         {
             var ac = new AllocCounter();
-            FlexTargetingCore.DetermineBestTarget(_testData, out _, _inputTargets, target => StaticTargetFilter(target));
+            FlexTargetingCore.DetermineBestTarget<TestTarget>(_testData, out _, _inputTargets,
+                target => StaticTargetFilter(target));
             int allocCount = ac.Stop();
 
             if (i == 0) _firstAllocCount = allocCount;
@@ -203,7 +204,8 @@ public class AllocationTests
         for (int i = 0; i < _numIterations; i++)
         {
             var ac = new AllocCounter();
-            FlexTargetingCore.DetermineBestTarget(_testData, out _, _inputTargets, target => target.specialNumber == 7);
+            FlexTargetingCore.DetermineBestTarget<TestTarget>(_testData, out _, _inputTargets,
+                target => target.specialNumber == 7);
             int allocCount = ac.Stop();
 
             if (i == 0) _firstAllocCount = allocCount;
@@ -225,7 +227,7 @@ public class AllocationTests
         for (int i = 0; i < _numIterations; i++)
         {
             var ac = new AllocCounter();
-            FlexTargetingCore.DetermineBestTarget(_testData, out _, _inputTargets,
+            FlexTargetingCore.DetermineBestTarget<TestTarget>(_testData, out _, _inputTargets,
                 delegate(TestTarget target) { return target.specialNumber == 7; });
             int allocCount = ac.Stop();
 
@@ -245,7 +247,7 @@ public class AllocationTests
         for (int i = 0; i < _numIterations; i++)
         {
             var ac = new AllocCounter();
-            FlexTargetingCore.DetermineBestTarget(_testData, out _, _inputTargets, _cachedInstanceFunction);
+            FlexTargetingCore.DetermineBestTarget<TestTarget>(_testData, out _, _inputTargets, _cachedInstanceFunction);
             int allocCount = ac.Stop();
 
             _noAllocOnAllIterations &= allocCount == 0;
@@ -262,7 +264,7 @@ public class AllocationTests
         for (int i = 0; i < _numIterations; i++)
         {
             var ac = new AllocCounter();
-            FlexTargetingCore.DetermineBestTarget(_testData, out _, _inputTargets, s_cachedStaticFunction);
+            FlexTargetingCore.DetermineBestTarget<TestTarget>(_testData, out _, _inputTargets, s_cachedStaticFunction);
             int allocCount = ac.Stop();
 
             _noAllocOnAllIterations &= allocCount == 0;
@@ -279,7 +281,7 @@ public class AllocationTests
         for (int i = 0; i < _numIterations; i++)
         {
             var ac = new AllocCounter();
-            FlexTargetingCore.DetermineBestTarget(_testData, out _, _inputTargets, s_cachedLambdaFunction);
+            FlexTargetingCore.DetermineBestTarget<TestTarget>(_testData, out _, _inputTargets, s_cachedLambdaFunction);
             int allocCount = ac.Stop();
 
             _noAllocOnAllIterations &= allocCount == 0;
@@ -296,7 +298,7 @@ public class AllocationTests
         for (int i = 0; i < _numIterations; i++)
         {
             var ac = new AllocCounter();
-            FlexTargetingCore.DetermineBestTarget(_testData, out _, _inputTargets, s_cachedAnonymousMethod);
+            FlexTargetingCore.DetermineBestTarget<TestTarget>(_testData, out _, _inputTargets, s_cachedAnonymousMethod);
             int allocCount = ac.Stop();
 
             _noAllocOnAllIterations &= allocCount == 0;

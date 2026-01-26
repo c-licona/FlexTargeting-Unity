@@ -64,7 +64,7 @@ namespace Cyclic.FlexTargeting
 
         #region DetermineBestTarget
 
-        /// <inheritdoc cref="DetermineBestTarget{TTarget}(IFlexData{TTarget}, out TTarget, in List{TTarget}, TargetFilter{TTarget})"/>
+        /// <inheritdoc cref="DetermineBestTarget{TTarget}(IFlexData{TTarget}, out TTarget, IReadOnlyList{TTarget}, TargetFilter{TTarget})"/>
         public static bool DetermineBestTarget<TTarget>([NotNull] IFlexData<TTarget> data,
             out TTarget bestTarget)
             where TTarget : class, IFlexTarget
@@ -75,19 +75,19 @@ namespace Cyclic.FlexTargeting
                 s_nullFilter);
         }
 
-        /// <inheritdoc cref="DetermineBestTarget{TTarget}(IFlexData{TTarget}, out TTarget, in List{TTarget}, TargetFilter{TTarget})"/>
+        /// <inheritdoc cref="DetermineBestTarget{TTarget}(IFlexData{TTarget}, out TTarget, IReadOnlyList{TTarget}, TargetFilter{TTarget})"/>
         public static bool DetermineBestTarget<TTarget>([NotNull] IFlexData<TTarget> data,
             out TTarget bestTarget,
-            in List<TTarget> inputTargets)
+            IReadOnlyList<TTarget> inputTargets)
             where TTarget : class, IFlexTarget
         {
             return DetermineBestTarget(data,
                 out bestTarget,
-                in inputTargets,
+                inputTargets,
                 s_nullFilter);
         }
 
-        /// <inheritdoc cref="DetermineBestTarget{TTarget}(IFlexData{TTarget}, out TTarget, in List{TTarget}, TargetFilter{TTarget})"/>
+        /// <inheritdoc cref="DetermineBestTarget{TTarget}(IFlexData{TTarget}, out TTarget, IReadOnlyList{TTarget}, TargetFilter{TTarget})"/>
         public static bool DetermineBestTarget<TTarget>([NotNull] IFlexData<TTarget> data,
             out TTarget bestTarget,
             [NotNull] TargetFilter<TTarget> targetFilter)
@@ -109,7 +109,7 @@ namespace Cyclic.FlexTargeting
         ///     determining the best target to return.</param>
         /// <param name="bestTarget">The best target that scores the best among the rest of the potential targets.
         ///     Will be null when no valid target was found.</param>
-        /// <param name="inputTargets">An enumerable collection of targets that will be filtered, scored, and
+        /// <param name="inputTargets">An collection of targets that will be filtered, scored, and
         ///     sorted to determine which is the best target to return.</param>
         /// <param name="targetFilter">A delegate that can further process each input target to determine whether it
         ///     should be considered for the final determination.</param>
@@ -118,7 +118,7 @@ namespace Cyclic.FlexTargeting
         /// false if no valid target was found, in which case <paramref name="bestTarget"/> will be null.</returns>
         public static bool DetermineBestTarget<TTarget>([NotNull] IFlexData<TTarget> data,
             out TTarget bestTarget,
-            in List<TTarget> inputTargets,
+            IReadOnlyList<TTarget> inputTargets,
             [NotNull] TargetFilter<TTarget> targetFilter)
             where TTarget : class, IFlexTarget
         {
@@ -127,13 +127,15 @@ namespace Cyclic.FlexTargeting
             s_potentialTargets.Clear();
 
             // filter valid targets and score them
-            foreach (var target in inputTargets)
+            for (int i = 0; i < inputTargets.Count; i++)
             {
+                var target = inputTargets[i];
+
                 if (data.DoesPassFilter(target) &&
                     targetFilter.Invoke(target) &&
                     data.ScoreTarget(target, out float score))
                 {
-                    s_potentialTargets.Add(new FlexTargetListItem() { flexTarget = target, score = score });
+                    s_potentialTargets.Add(new FlexTargetListItem{ flexTarget = target, score = score });
                 }
             }
 
@@ -160,7 +162,7 @@ namespace Cyclic.FlexTargeting
 
         #region DetermineBestTarget with context
 
-        /// <inheritdoc cref="DetermineBestTarget{TContext, TTarget}(TContext, IFlexData{TTarget}, out TTarget, in List{TTarget}, TargetFilter{TContext, TTarget})"/>
+        /// <inheritdoc cref="DetermineBestTarget{TContext, TTarget}(TContext, IFlexData{TTarget}, out TTarget, IReadOnlyList{TTarget}, TargetFilter{TContext, TTarget})"/>
         public static bool DetermineBestTarget<TContext, TTarget>(TContext context,
             [NotNull] IFlexData<TTarget> data,
             out TTarget bestTarget,
@@ -216,7 +218,7 @@ namespace Cyclic.FlexTargeting
         public static bool DetermineBestTarget<TContext, TTarget>(TContext context,
             [NotNull] IFlexData<TTarget> data,
             out TTarget bestTarget,
-            in List<TTarget> inputTargets,
+            IReadOnlyList<TTarget> inputTargets,
             [NotNull] TargetFilter<TContext, TTarget> targetFilter)
             where TTarget : class, IFlexTarget
         {
@@ -225,13 +227,15 @@ namespace Cyclic.FlexTargeting
             s_potentialTargets.Clear();
 
             // filter valid targets and score them
-            foreach (var target in inputTargets)
+            for (int i = 0; i < inputTargets.Count; i++)
             {
+                var target = inputTargets[i];
+
                 if (data.DoesPassFilter(target) &&
                     targetFilter.Invoke(context, target) &&
                     data.ScoreTarget(target, out float score))
                 {
-                    s_potentialTargets.Add(new FlexTargetListItem() { flexTarget = target, score = score });
+                    s_potentialTargets.Add(new FlexTargetListItem{ flexTarget = target, score = score });
                 }
             }
 
@@ -270,12 +274,12 @@ namespace Cyclic.FlexTargeting
 
         public static int DetermineBestTargets<TTarget>([NotNull] IFlexData<TTarget> data,
             in List<TTarget> bestTargets,
-            in List<TTarget> inputTargets)
+            IReadOnlyList<TTarget> inputTargets)
             where TTarget : class, IFlexTarget
         {
             return DetermineBestTargets(data,
                 in bestTargets,
-                in inputTargets,
+                inputTargets,
                 s_nullFilter);
         }
 
@@ -292,7 +296,7 @@ namespace Cyclic.FlexTargeting
 
         public static int DetermineBestTargets<TTarget>([NotNull] IFlexData<TTarget> data,
             in List<TTarget> bestTargets,
-            in List<TTarget> inputTargets,
+            IReadOnlyList<TTarget> inputTargets,
             [NotNull] TargetFilter<TTarget> targetFilter)
             where TTarget : class, IFlexTarget
         {
@@ -302,14 +306,16 @@ namespace Cyclic.FlexTargeting
             s_potentialTargets.Clear();
 
             // filter valid targets and score them
-            foreach (var target in inputTargets)
+            for (int i = 0; i < inputTargets.Count; i++)
             {
+                var target = inputTargets[i];
+
                 if (data.DoesPassFilter(target) &&
                     targetFilter.Invoke(target) &&
                     data.ScoreTarget(target, out float score) &&
                     !IsTargetLosBlocked(data, target))
                 {
-                    s_potentialTargets.Add(new FlexTargetListItem() { flexTarget = target, score = score });
+                    s_potentialTargets.Add(new FlexTargetListItem{ flexTarget = target, score = score });
                 }
             }
 
@@ -345,7 +351,7 @@ namespace Cyclic.FlexTargeting
         public static int DetermineBestTargets<TContext, TTarget>(TContext context,
             [NotNull] IFlexData<TTarget> data,
             in List<TTarget> bestTargets,
-            in List<TTarget> inputTargets,
+            IReadOnlyList<TTarget> inputTargets,
             [NotNull] TargetFilter<TContext, TTarget> targetFilter)
             where TTarget : class, IFlexTarget
         {
@@ -355,14 +361,16 @@ namespace Cyclic.FlexTargeting
             s_potentialTargets.Clear();
 
             // filter valid targets and score them
-            foreach (var target in inputTargets)
+            for (int i = 0; i < inputTargets.Count; i++)
             {
+                var target = inputTargets[i];
+
                 if (data.DoesPassFilter(target) &&
                     targetFilter.Invoke(context, target) &&
                     data.ScoreTarget(target, out float score) &&
                     !IsTargetLosBlocked(data, target))
                 {
-                    s_potentialTargets.Add(new FlexTargetListItem() { flexTarget = target, score = score });
+                    s_potentialTargets.Add(new FlexTargetListItem{ flexTarget = target, score = score });
                 }
             }
 

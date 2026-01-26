@@ -41,7 +41,7 @@ public class BasicAPIEditorTests
     public void BasicAPI_Method02_TargetFound()
     {
         // Act
-        bool wasTargetFound = FlexTargetingCore.DetermineBestTarget(_testData, out var bestTarget, _inputTargets);
+        bool wasTargetFound = FlexTargetingCore.DetermineBestTarget(_testData, out TestTarget bestTarget, _inputTargets);
 
         // Assert
         Assert.IsTrue(wasTargetFound);
@@ -52,7 +52,7 @@ public class BasicAPIEditorTests
     public void BasicAPI_Method04_TargetFound()
     {
         // Act
-        bool wasTargetFound = FlexTargetingCore.DetermineBestTarget(_testData, out var bestTarget, _inputTargets,
+        bool wasTargetFound = FlexTargetingCore.DetermineBestTarget(_testData, out TestTarget bestTarget, _inputTargets,
             target => target.IsTargetValid);
 
         // Assert
@@ -64,7 +64,7 @@ public class BasicAPIEditorTests
     public void BasicAPI_Method06_TargetFound()
     {
         // Act
-        bool wasTargetFound = FlexTargetingCore.DetermineBestTarget(this, _testData, out var bestTarget,
+        bool wasTargetFound = FlexTargetingCore.DetermineBestTarget(this, _testData, out TestTarget bestTarget,
             _inputTargets, (context, target) => context._testTarget == target);
 
         // Assert
