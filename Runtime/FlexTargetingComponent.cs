@@ -9,7 +9,7 @@ namespace Cyclic.FlexTargeting
     /// methods that simplify calling into <see cref="FlexTargetingCore"/>.
     /// </summary>
     /// <typeparam name="TFlexData">The flex targeting data type to use in all flex targeting functions.</typeparam>
-    public class FlexTargetingComponent<TFlexData> : MonoBehaviour where TFlexData : IFlexData<IFlexTarget>, new()
+    public class FlexTargetingComponent<TFlexData> : MonoBehaviour where TFlexData : class, IFlexData<IFlexTarget>, new()
     {
         [Header("Settings")]
         [SerializeField] private TFlexData _data = new();
