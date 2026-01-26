@@ -39,31 +39,19 @@ namespace Cyclic.FlexTargeting.Builtin
         public Vector3 ManualOriginPos { get; set; } = Vector3.zero;
         public Vector3 ManualOriginDir { get; set; } = Vector3.zero;
 
-        public Vector3 TargeterPosition
+        public Vector3 TargeterPosition => _targeterOriginSource switch
         {
-            get
-            {
-                return _targeterOriginSource switch
-                {
-                    TargeterOriginSource.Transform => _targeterOrigin.position,
-                    TargeterOriginSource.Manual => ManualOriginPos,
-                    _ => throw new ArgumentOutOfRangeException()
-                };
-            }
-        }
+            TargeterOriginSource.Transform => _targeterOrigin.position,
+            TargeterOriginSource.Manual => ManualOriginPos,
+            _ => throw new ArgumentOutOfRangeException()
+        };
 
-        public Vector3 TargeterDirection
+        public Vector3 TargeterDirection => _targeterOriginSource switch
         {
-            get
-            {
-                return _targeterOriginSource switch
-                {
-                    TargeterOriginSource.Transform => _targeterOrigin.forward,
-                    TargeterOriginSource.Manual => ManualOriginDir,
-                    _ => throw new ArgumentOutOfRangeException()
-                };
-            }
-        }
+            TargeterOriginSource.Transform => _targeterOrigin.forward,
+            TargeterOriginSource.Manual => ManualOriginDir,
+            _ => throw new ArgumentOutOfRangeException()
+        };
 
         public bool ScoreTarget(IFlexTarget target, out float score)
         {

@@ -11,7 +11,8 @@ namespace Cyclic.FlexTargeting.Builtin
     public class RangeTargetingData : IFlexData<IFlexTarget>
     {
         [Header("References")]
-        [SerializeField] private Transform _targeterOrigin;
+        [SerializeField] private TargeterOriginSource _targeterOriginSource = TargeterOriginSource.Transform;
+        [SerializeField] private Transform _targeterOrigin = null;
 
         [Header("Settings")]
         [SerializeField, Min(0.0f)] private float _maxRange = 10.0f;
@@ -20,10 +21,20 @@ namespace Cyclic.FlexTargeting.Builtin
         [SerializeField, Min(0.0f)] private float _losBufferRadius = 0.0f;
         [SerializeField] private LayerMask _losLayerMask = Physics.DefaultRaycastLayers;
 
-        public Vector3 TargeterPosition => _targeterOrigin.position;
         public float MaxRange { get => _maxRange; set => _maxRange = value; }
         public float LosBufferRadius { get => _losBufferRadius; set => _losBufferRadius = value; }
         public LayerMask LosLayerMask { get => _losLayerMask; set => _losLayerMask = value; }
+
+        public TargeterOriginSource TargeterOriginSource { get => _targeterOriginSource; set => _targeterOriginSource = value; }
+        public Transform TargeterOrigin { get => _targeterOrigin; set => _targeterOrigin = value; }
+        public Vector3 ManualOriginPos { get; set; } = Vector3.zero;
+
+        public Vector3 TargeterPosition => _targeterOriginSource switch
+        {
+            TargeterOriginSource.Transform => _targeterOrigin.position,
+            TargeterOriginSource.Manual => ManualOriginPos,
+            _ => throw new ArgumentOutOfRangeException()
+        };
 
         public bool ScoreTarget(IFlexTarget target, out float score)
         {
