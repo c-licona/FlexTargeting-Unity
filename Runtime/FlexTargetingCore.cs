@@ -263,39 +263,39 @@ namespace Cyclic.FlexTargeting
         #region DetermineBestTargets
 
         public static int DetermineBestTargets<TTarget>([NotNull] IFlexData<TTarget> data,
-            in List<TTarget> bestTargets)
+            ICollection<TTarget> bestTargets)
             where TTarget : class, IFlexTarget
         {
             return DetermineBestTargets(data,
-                in bestTargets,
+                bestTargets,
                 inputTargets: FlexTargetRepository.Instance.OfType<TTarget>().Targets,
                 s_nullFilter);
         }
 
         public static int DetermineBestTargets<TTarget>([NotNull] IFlexData<TTarget> data,
-            in List<TTarget> bestTargets,
+            ICollection<TTarget> bestTargets,
             IReadOnlyList<TTarget> inputTargets)
             where TTarget : class, IFlexTarget
         {
             return DetermineBestTargets(data,
-                in bestTargets,
+                bestTargets,
                 inputTargets,
                 s_nullFilter);
         }
 
         public static int DetermineBestTargets<TTarget>([NotNull] IFlexData<TTarget> data,
-            in List<TTarget> bestTargets,
+            ICollection<TTarget> bestTargets,
             [NotNull] TargetFilter<TTarget> targetFilter)
             where TTarget : class, IFlexTarget
         {
             return DetermineBestTargets(data,
-                in bestTargets,
+                bestTargets,
                 inputTargets: FlexTargetRepository.Instance.OfType<TTarget>().Targets,
                 targetFilter);
         }
 
         public static int DetermineBestTargets<TTarget>([NotNull] IFlexData<TTarget> data,
-            in List<TTarget> bestTargets,
+            ICollection<TTarget> bestTargets,
             IReadOnlyList<TTarget> inputTargets,
             [NotNull] TargetFilter<TTarget> targetFilter)
             where TTarget : class, IFlexTarget
@@ -337,20 +337,20 @@ namespace Cyclic.FlexTargeting
 
         public static int DetermineBestTargets<TContext, TTarget>(TContext context,
             [NotNull] IFlexData<TTarget> data,
-            in List<TTarget> bestTargets,
+            ICollection<TTarget> bestTargets,
             [NotNull] TargetFilter<TContext, TTarget> targetFilter)
             where TTarget : class, IFlexTarget
         {
             return DetermineBestTargets(context,
                 data,
-                in bestTargets,
+                bestTargets,
                 inputTargets: FlexTargetRepository.Instance.OfType<TTarget>().Targets,
                 targetFilter);
         }
 
         public static int DetermineBestTargets<TContext, TTarget>(TContext context,
             [NotNull] IFlexData<TTarget> data,
-            in List<TTarget> bestTargets,
+            ICollection<TTarget> bestTargets,
             IReadOnlyList<TTarget> inputTargets,
             [NotNull] TargetFilter<TContext, TTarget> targetFilter)
             where TTarget : class, IFlexTarget

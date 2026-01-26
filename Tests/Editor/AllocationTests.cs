@@ -80,13 +80,35 @@ public class AllocationTests
     // other static allocations do not get reset between test cases
 
     [Test]
-    public void Allocations_BasicTest_NoAlloc()
+    public void Allocations_BasicTest_BestTarget_NoAlloc()
     {
         // Act
         for (int i = 0; i < _numIterations; i++)
         {
             var ac = new AllocCounter();
             FlexTargetingCore.DetermineBestTarget<TestTarget>(_testData, out _, _inputTargets);
+            int allocCount = ac.Stop();
+
+            if (i == 0) _firstAllocCount = allocCount;
+            else _noAllocOnRemainingIterations &= allocCount == 0;
+        }
+
+        // Assert
+        Assert.NotZero(_firstAllocCount); // first time always allocates
+        Assert.IsTrue(_noAllocOnRemainingIterations);
+    }
+
+    [Test]
+    public void Allocations_BasicTest_BestTargets_NoAlloc()
+    {
+        // Arrange
+        List<TestTarget> bestTargets = new();
+
+        // Act
+        for (int i = 0; i < _numIterations; i++)
+        {
+            var ac = new AllocCounter();
+            FlexTargetingCore.DetermineBestTargets<TestTarget>(_testData, bestTargets, _inputTargets);
             int allocCount = ac.Stop();
 
             if (i == 0) _firstAllocCount = allocCount;
