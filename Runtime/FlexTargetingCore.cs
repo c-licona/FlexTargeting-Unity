@@ -155,7 +155,7 @@ namespace Cyclic.FlexTargeting
             {
                 IFlexTarget target = targetItem.flexTarget;
 
-                if (!IsTargetLosBlocked(data, target))
+                if (!IsTargetLosBlocked(target, data.LosLayerMask.value, data.LosBufferRadius, data.TargeterPosition))
                 {
                     bestTarget = target as TTarget;
                     return true;
@@ -254,7 +254,7 @@ namespace Cyclic.FlexTargeting
             {
                 IFlexTarget target = targetItem.flexTarget;
 
-                if (!IsTargetLosBlocked(data, target))
+                if (!IsTargetLosBlocked(target, data.LosLayerMask.value, data.LosBufferRadius, data.TargeterPosition))
                 {
                     bestTarget = target as TTarget;
                     return true;
@@ -349,7 +349,7 @@ namespace Cyclic.FlexTargeting
                 if (data.DoesPassFilter(target) &&
                     targetFilter.Invoke(target) &&
                     data.ScoreTarget(target, out float score) &&
-                    !IsTargetLosBlocked(data, target))
+                    !IsTargetLosBlocked(target, data.LosLayerMask.value, data.LosBufferRadius, data.TargeterPosition))
                 {
                     s_potentialTargets.Add(new FlexTargetListItem{ flexTarget = target, score = score });
                 }
@@ -447,7 +447,7 @@ namespace Cyclic.FlexTargeting
                 if (data.DoesPassFilter(target) &&
                     targetFilter.Invoke(context, target) &&
                     data.ScoreTarget(target, out float score) &&
-                    !IsTargetLosBlocked(data, target))
+                    !IsTargetLosBlocked(target, data.LosLayerMask.value, data.LosBufferRadius, data.TargeterPosition))
                 {
                     s_potentialTargets.Add(new FlexTargetListItem{ flexTarget = target, score = score });
                 }
@@ -474,28 +474,32 @@ namespace Cyclic.FlexTargeting
         /// <summary>
         /// Check if there is anything blocking line of sight between the origin and the target.
         /// </summary>
-        /// <param name="data">The data containing info needed for this check.</param>
         /// <param name="target">The target we are checking</param>
+        /// <param name="losLayerMask">The layer mask that will block LOS</param>
+        /// <param name="losBufferRadius">The LOS buffer radius of the targeter</param>
+        /// <param name="targeterPosition">The position of the targeter</param>
         /// <returns>Returns true if there is anything in between the raycast between the origin and the target.
         /// Returns false otherwise. Also returns false if the data has specified not to care about LOS.</returns>
-        private static bool IsTargetLosBlocked<TTarget>(IFlexData<TTarget> data, IFlexTarget target)
-            where TTarget : IFlexTarget
+        private static bool IsTargetLosBlocked(IFlexTarget target,
+            int losLayerMask,
+            float losBufferRadius,
+            Vector3 targeterPosition)
         {
             // if the LOS layer mask is set to nothing then automatically return as not blocked
-            if (data.LosLayerMask.value == FlexTargetingExtras.NoLayers) return false;
+            if (losLayerMask == FlexTargetingExtras.NoLayers) return false;
 
-            Vector3 origin = data.TargeterPosition;
+            Vector3 origin = targeterPosition;
             Vector3 oToTarget = target.TargetPosition - origin;
-            float rayDistance = oToTarget.magnitude - target.LosBufferRadius - data.LosBufferRadius;
+            float rayDistance = oToTarget.magnitude - target.LosBufferRadius - losBufferRadius;
             // if a target is so close that the distance is non-positive than we consider it not LOS blocked
             if (rayDistance <= Mathf.Epsilon) return false;
 
             int numHits = Physics.RaycastNonAlloc(
-                origin: origin + (oToTarget.normalized * data.LosBufferRadius),
+                origin: origin + (oToTarget.normalized * losBufferRadius),
                 direction: oToTarget.normalized,
                 s_losResults,
                 rayDistance,
-                data.LosLayerMask.value,
+                losLayerMask,
                 QueryTriggerInteraction.Ignore);
 
             // if there are any hits then the target is LOS blocked
