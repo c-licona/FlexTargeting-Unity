@@ -4,7 +4,8 @@
     "references": [
         "UnityEngine.TestRunner",
         "UnityEditor.TestRunner",
-        "Cyclic.FlexTargeting"
+        "Cyclic.FlexTargeting",
+        "Cyclic.FlexTargeting.Tests.Utility"
     ],
     "includePlatforms": [
         "Editor"
