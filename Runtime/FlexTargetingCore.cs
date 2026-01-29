@@ -147,7 +147,6 @@ namespace Cyclic.FlexTargeting
                 }
             }
 
-            // sort targets by their score (smallest to largest)
             s_potentialTargets.Sort(data.ScoreComparer);
 
             // return the first target that isn't LOS blocked
@@ -246,7 +245,6 @@ namespace Cyclic.FlexTargeting
                 }
             }
 
-            // sort targets by their score (smallest to largest)
             s_potentialTargets.Sort(data.ScoreComparer);
 
             // return the first target that isn't LOS blocked
@@ -355,7 +353,6 @@ namespace Cyclic.FlexTargeting
                 }
             }
 
-            // sort targets by their score (smallest to largest)
             s_potentialTargets.Sort(data.ScoreComparer);
 
             // send the filtered targets to the final targets list
@@ -453,7 +450,6 @@ namespace Cyclic.FlexTargeting
                 }
             }
 
-            // sort targets by their score (smallest to largest)
             s_potentialTargets.Sort(data.ScoreComparer);
 
             // send the filtered targets to the final targets list

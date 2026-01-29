@@ -12,19 +12,23 @@ namespace Cyclic.FlexTargeting
         /// <summary>
         /// Get the list of all targets currently in the repository
         /// </summary>
-        IReadOnlyList<T> GetTargets<T>() where T : class, IFlexTarget;
+        /// <typeparam name="TTarget">The type of flex target to get a list of.</typeparam>
+        /// <returns>Returns a read only list of targets of only type <typeparamref name="TTarget"/></returns>
+        IReadOnlyList<TTarget> GetTargets<TTarget>() where TTarget : class, IFlexTarget;
 
         /// <summary>
-        /// Add the target to the repository
+        /// Add the target to the repository.
         /// </summary>
-        /// <param name="targetToAdd">The flex target to add.</param>
-        void AddTarget<T>(T targetToAdd) where T : class, IFlexTarget;
+        /// <param name="targetToAdd">The target to add to the repository.</param>
+        /// <typeparam name="TTarget">The specific type of flex target that will be added.</typeparam>
+        void AddTarget<TTarget>(TTarget targetToAdd) where TTarget : class, IFlexTarget;
 
         /// <summary>
-        /// Remove the target from the repository
+        /// Removes the target from the repository.
         /// </summary>
-        /// <param name="targetToRemove">The target to remove</param>
-        void RemoveTarget<T>(T targetToRemove) where T : class, IFlexTarget;
+        /// <param name="targetToRemove">The target to remove from the repository.</param>
+        /// <typeparam name="TTarget">The specific type of flex target that will be removed.</typeparam>
+        void RemoveTarget<TTarget>(TTarget targetToRemove) where TTarget : class, IFlexTarget;
     }
 
     /// <summary>
@@ -37,32 +41,32 @@ namespace Cyclic.FlexTargeting
         private static IFlexTargetRepository s_repository = new BuiltinRepository.BuiltinFlexTargetRepositoryAccessor();
 
         /// <summary>
-        /// Get a list of all the targets of type <typeparamref name="T"/> from the repository.
+        /// Get a list of all the targets of type <typeparamref name="TTarget"/> from the repository.
         /// </summary>
-        /// <typeparam name="T">The specific type of flex target to get a list of.</typeparam>
+        /// <typeparam name="TTarget">The specific type of flex target to get a list of.</typeparam>
         /// <returns>Returns a readonly list, typically for iteration through the core methods.</returns>
-        public static IReadOnlyList<T> GetTargets<T>() where T : class, IFlexTarget
+        public static IReadOnlyList<TTarget> GetTargets<TTarget>() where TTarget : class, IFlexTarget
         {
-            return s_repository.GetTargets<T>();
+            return s_repository.GetTargets<TTarget>();
         }
 
         /// <summary>
-        /// Add the target of type <typeparamref name="T"/> to the repository. Ensure that this target is removed from
-        /// the repository with <see cref="RemoveTarget"/>.
+        /// Add the target of type <typeparamref name="TTarget"/> to the repository. Ensure that this target is removed
+        /// from the repository with <see cref="RemoveTarget"/>.
         /// </summary>
         /// <param name="targetToAdd">The target to add to the repository.</param>
-        /// <typeparam name="T">The specific type of flex target to add to the repository.</typeparam>
-        public static void AddTarget<T>(T targetToAdd) where T : class, IFlexTarget
+        /// <typeparam name="TTarget">The specific type of flex target to add to the repository.</typeparam>
+        public static void AddTarget<TTarget>(TTarget targetToAdd) where TTarget : class, IFlexTarget
         {
             s_repository.AddTarget(targetToAdd);
         }
 
         /// <summary>
-        /// Remove the target of type <typeparamref name="T"/> from the repository.
+        /// Remove the target of type <typeparamref name="TTarget"/> from the repository.
         /// </summary>
         /// <param name="targetToRemove">The target to remove from the repository.</param>
-        /// <typeparam name="T">The specific type of flex target to remove from the repository.</typeparam>
-        public static void RemoveTarget<T>(T targetToRemove) where T : class, IFlexTarget
+        /// <typeparam name="TTarget">The specific type of flex target to remove from the repository.</typeparam>
+        public static void RemoveTarget<TTarget>(TTarget targetToRemove) where TTarget : class, IFlexTarget
         {
             s_repository.RemoveTarget(targetToRemove);
         }
