@@ -10,7 +10,7 @@ namespace Cyclic.FlexTargeting
     /// in the <see cref="FlexTargetRepository"/></typeparam>
     /// <example>
     /// An example of setting <typeparamref name="TSelf"/> correctly in a derived class:
-    /// <code>class InteractionTarget : FlexTargetComponent{InteractionTarget}</code>
+    /// <code>class AimAssistTarget : FlexTargetComponent{AimAssistTarget}</code>
     /// </example>
     public abstract class FlexTargetComponent<TSelf> : MonoBehaviour, IFlexTarget where TSelf : FlexTargetComponent<TSelf>
     {
@@ -32,7 +32,7 @@ namespace Cyclic.FlexTargeting
         {
             if (_registerWhen == RegisterWhen.OnAwake)
             {
-                FlexTargetRepository.Instance.OfType<TSelf>().AddTarget(this as TSelf);
+                FlexTargetRepository.AddTarget(this as TSelf);
             }
         }
 
@@ -40,11 +40,7 @@ namespace Cyclic.FlexTargeting
         {
             if (_registerWhen == RegisterWhen.OnAwake)
             {
-                if (FlexTargetRepository.TryGetInstance(out var repository) &&
-                    repository.TryOfType<TSelf>(out var targetRepository))
-                {
-                    targetRepository.RemoveTarget(this as TSelf);
-                }
+                FlexTargetRepository.RemoveTarget(this as TSelf);
             }
         }
 
@@ -52,7 +48,7 @@ namespace Cyclic.FlexTargeting
         {
             if (_registerWhen == RegisterWhen.OnEnable)
             {
-                FlexTargetRepository.Instance.OfType<TSelf>().AddTarget(this as TSelf);
+                FlexTargetRepository.AddTarget(this as TSelf);
             }
         }
 
@@ -60,11 +56,7 @@ namespace Cyclic.FlexTargeting
         {
             if (_registerWhen == RegisterWhen.OnEnable)
             {
-                if (FlexTargetRepository.TryGetInstance(out var repository) &&
-                    repository.TryOfType<TSelf>(out var targetRepository))
-                {
-                    targetRepository.RemoveTarget(this as TSelf);
-                }
+                FlexTargetRepository.RemoveTarget(this as TSelf);
             }
         }
 

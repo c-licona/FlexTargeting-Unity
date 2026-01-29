@@ -71,7 +71,7 @@ namespace Cyclic.FlexTargeting
         {
             return DetermineBestTarget(data,
                 out bestTarget,
-                inputTargets: FlexTargetRepository.Instance.OfType<TTarget>().Targets,
+                inputTargets: FlexTargetRepository.GetTargets<TTarget>(),
                 s_nullFilter);
         }
 
@@ -95,7 +95,7 @@ namespace Cyclic.FlexTargeting
         {
             return DetermineBestTarget(data,
                 out bestTarget,
-                inputTargets: FlexTargetRepository.Instance.OfType<TTarget>().Targets,
+                inputTargets: FlexTargetRepository.GetTargets<TTarget>(),
                 targetFilter);
         }
 
@@ -180,7 +180,7 @@ namespace Cyclic.FlexTargeting
             return DetermineBestTarget(context,
                 data,
                 out bestTarget,
-                inputTargets: FlexTargetRepository.Instance.OfType<TTarget>().Targets,
+                inputTargets: FlexTargetRepository.GetTargets<TTarget>(),
                 targetFilter);
         }
 
@@ -276,7 +276,7 @@ namespace Cyclic.FlexTargeting
         {
             return DetermineBestTargets(data,
                 bestTargets,
-                inputTargets: FlexTargetRepository.Instance.OfType<TTarget>().Targets,
+                inputTargets: FlexTargetRepository.GetTargets<TTarget>(),
                 s_nullFilter);
         }
 
@@ -300,7 +300,7 @@ namespace Cyclic.FlexTargeting
         {
             return DetermineBestTargets(data,
                 bestTargets,
-                inputTargets: FlexTargetRepository.Instance.OfType<TTarget>().Targets,
+                inputTargets: FlexTargetRepository.GetTargets<TTarget>(),
                 targetFilter);
         }
 
@@ -383,7 +383,7 @@ namespace Cyclic.FlexTargeting
             return DetermineBestTargets(context,
                 data,
                 bestTargets,
-                inputTargets: FlexTargetRepository.Instance.OfType<TTarget>().Targets,
+                inputTargets: FlexTargetRepository.GetTargets<TTarget>(),
                 targetFilter);
         }
 
