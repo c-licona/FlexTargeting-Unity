@@ -56,6 +56,12 @@ namespace Cyclic.FlexTargeting
         LayerMask LosLayerMask { get; }
 
         /// <summary>
+        /// The query trigger interaction setting to use for the line-of-sight (LOS) check. The most common setting to
+        /// use (in my experience) is to ignore triggers, but this setting can be changed to suit your needs.
+        /// </summary>
+        QueryTriggerInteraction LosQueryTriggerInteraction => QueryTriggerInteraction.Ignore;
+
+        /// <summary>
         /// The comparison method to use to determine how scores are sorted. Use
         /// <see cref="FlexTargetingExtras.SortBySmallestScore"/> in order to consider the target with the smallest score
         /// as the best target (this is the most common sorting method). Use

@@ -27,7 +27,7 @@ namespace Cyclic.FlexTargeting
     /// </para>
     /// <para>
     /// A context reference is passed in from which additional data can be accessed when evaluating the target. The
-    /// most common usage of this delegate is to pass in <c>this</c> as the context so as to not allocate heap memory
+    /// most common usage of this delegate is to pass in <c>this</c> as the context to not allocate heap memory
     /// because of an implicit capture of <c>this</c>.
     /// See: https://github.com/KyryloKuzyk/PrimeTween?tab=readme-ov-file#zero-allocations-with-delegates and
     /// https://www.jacksondunstan.com/articles/3765
@@ -154,7 +154,8 @@ namespace Cyclic.FlexTargeting
             {
                 IFlexTarget target = targetItem.flexTarget;
 
-                if (!IsTargetLosBlocked(target, data.LosLayerMask.value, data.LosBufferRadius, data.TargeterPosition))
+                if (!IsTargetLosBlocked(target, data.TargeterPosition, data.LosBufferRadius, data.LosLayerMask,
+                        data.LosQueryTriggerInteraction))
                 {
                     bestTarget = target as TTarget;
                     return true;
@@ -252,7 +253,8 @@ namespace Cyclic.FlexTargeting
             {
                 IFlexTarget target = targetItem.flexTarget;
 
-                if (!IsTargetLosBlocked(target, data.LosLayerMask.value, data.LosBufferRadius, data.TargeterPosition))
+                if (!IsTargetLosBlocked(target, data.TargeterPosition, data.LosBufferRadius, data.LosLayerMask,
+                        data.LosQueryTriggerInteraction))
                 {
                     bestTarget = target as TTarget;
                     return true;
@@ -347,7 +349,8 @@ namespace Cyclic.FlexTargeting
                 if (data.DoesPassFilter(target) &&
                     targetFilter.Invoke(target) &&
                     data.ScoreTarget(target, out float score) &&
-                    !IsTargetLosBlocked(target, data.LosLayerMask.value, data.LosBufferRadius, data.TargeterPosition))
+                    !IsTargetLosBlocked(target, data.TargeterPosition, data.LosBufferRadius, data.LosLayerMask,
+                        data.LosQueryTriggerInteraction))
                 {
                     s_potentialTargets.Add(new FlexTargetListItem{ flexTarget = target, score = score });
                 }
@@ -444,7 +447,8 @@ namespace Cyclic.FlexTargeting
                 if (data.DoesPassFilter(target) &&
                     targetFilter.Invoke(context, target) &&
                     data.ScoreTarget(target, out float score) &&
-                    !IsTargetLosBlocked(target, data.LosLayerMask.value, data.LosBufferRadius, data.TargeterPosition))
+                    !IsTargetLosBlocked(target, data.TargeterPosition, data.LosBufferRadius, data.LosLayerMask,
+                        data.LosQueryTriggerInteraction))
                 {
                     s_potentialTargets.Add(new FlexTargetListItem{ flexTarget = target, score = score });
                 }
@@ -471,18 +475,20 @@ namespace Cyclic.FlexTargeting
         /// Check if there is anything blocking line of sight between the origin and the target.
         /// </summary>
         /// <param name="target">The target we are checking</param>
-        /// <param name="losLayerMask">The layer mask that will block LOS</param>
-        /// <param name="losBufferRadius">The LOS buffer radius of the targeter</param>
         /// <param name="targeterPosition">The position of the targeter</param>
+        /// <param name="losBufferRadius">The LOS buffer radius of the targeter</param>
+        /// <param name="losLayerMask">The layer mask that will block LOS</param>
+        /// <param name="losQueryTriggerInteraction">The QueryTriggerInteraction to use for the LOS check</param>
         /// <returns>Returns true if there is anything in between the raycast between the origin and the target.
         /// Returns false otherwise. Also returns false if the data has specified not to care about LOS.</returns>
         private static bool IsTargetLosBlocked(IFlexTarget target,
-            int losLayerMask,
+            Vector3 targeterPosition,
             float losBufferRadius,
-            Vector3 targeterPosition)
+            LayerMask losLayerMask,
+            QueryTriggerInteraction losQueryTriggerInteraction)
         {
             // if the LOS layer mask is set to nothing then automatically return as not blocked
-            if (losLayerMask == FlexTargetingExtras.NoLayers) return false;
+            if (losLayerMask.value == FlexTargetingExtras.NoLayers) return false;
 
             Vector3 origin = targeterPosition;
             Vector3 oToTarget = target.TargetPosition - origin;
@@ -495,8 +501,8 @@ namespace Cyclic.FlexTargeting
                 direction: oToTarget.normalized,
                 s_losResults,
                 rayDistance,
-                losLayerMask,
-                QueryTriggerInteraction.Ignore);
+                losLayerMask.value,
+                losQueryTriggerInteraction);
 
             // if there are any hits then the target is LOS blocked
             return numHits > 0;
