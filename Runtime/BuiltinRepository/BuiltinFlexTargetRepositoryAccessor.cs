@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 
-namespace Cyclic.FlexTargeting
+namespace Cyclic.FlexTargeting.BuiltinRepository
 {
     public class BuiltinFlexTargetRepositoryAccessor : IFlexTargetRepository
     {

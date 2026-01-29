@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace Cyclic.FlexTargeting
+namespace Cyclic.FlexTargeting.BuiltinRepository
 {
     /// <summary>
     /// <para>
