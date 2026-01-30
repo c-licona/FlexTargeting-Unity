@@ -18,7 +18,7 @@ public class AllocationTests
         public Vector3 TargetPosition { get; } = Vector3.forward;
         public float LosBufferRadius => 0.0f;
 
-        public int specialNumber = 7;
+        public int SpecialNumber = 7;
     }
 
     private class TestData : IFlexData<IFlexTarget>
@@ -55,7 +55,7 @@ public class AllocationTests
 
     private static bool StaticTargetFilter(TestTarget target)
     {
-        return target.specialNumber == s_specialNumber;
+        return target.SpecialNumber == s_specialNumber;
     }
 
     [SetUp]
@@ -72,8 +72,8 @@ public class AllocationTests
 
         _cachedInstanceFunction = TargetFilter;
         s_cachedStaticFunction = StaticTargetFilter;
-        s_cachedLambdaFunction = target => target.specialNumber == 7;
-        s_cachedAnonymousMethod = delegate(TestTarget target) { return target.specialNumber == 7; };
+        s_cachedLambdaFunction = target => target.SpecialNumber == 7;
+        s_cachedAnonymousMethod = delegate(TestTarget target) { return target.SpecialNumber == 7; };
     }
 
     // Unfortunately I can't use test cases with different numbers of iterations because the first time allocations and
@@ -227,7 +227,7 @@ public class AllocationTests
         {
             var ac = new AllocCounter();
             FlexTargetingCore.DetermineBestTarget<TestTarget>(_testData, out _, _inputTargets,
-                target => target.specialNumber == 7);
+                target => target.SpecialNumber == 7);
             int allocCount = ac.Stop();
 
             if (i == 0) _firstAllocCount = allocCount;
@@ -250,7 +250,7 @@ public class AllocationTests
         {
             var ac = new AllocCounter();
             FlexTargetingCore.DetermineBestTarget<TestTarget>(_testData, out _, _inputTargets,
-                delegate(TestTarget target) { return target.specialNumber == 7; });
+                delegate(TestTarget target) { return target.SpecialNumber == 7; });
             int allocCount = ac.Stop();
 
             if (i == 0) _firstAllocCount = allocCount;

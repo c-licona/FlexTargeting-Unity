@@ -8,8 +8,8 @@ namespace Cyclic.FlexTargeting
 {
     public struct FlexTargetListItem
     {
-        public IFlexTarget flexTarget;
-        public float score;
+        public IFlexTarget FlexTarget;
+        public float Score;
     }
 
     /// <summary>
@@ -49,8 +49,8 @@ namespace Cyclic.FlexTargeting
         /// </summary>
         public const int NoLayers = 0;
 
-        public static readonly Comparison<FlexTargetListItem> SortBySmallestScore = (x, y) => x.score.CompareTo(y.score);
-        public static readonly Comparison<FlexTargetListItem> SortByLargestScore = (x, y) => y.score.CompareTo(x.score);
+        public static readonly Comparison<FlexTargetListItem> SortBySmallestScore = (x, y) => x.Score.CompareTo(y.Score);
+        public static readonly Comparison<FlexTargetListItem> SortByLargestScore = (x, y) => y.Score.CompareTo(x.Score);
     }
 
     /// <summary>
@@ -143,7 +143,7 @@ namespace Cyclic.FlexTargeting
                     targetFilter.Invoke(target) &&
                     data.ScoreTarget(target, out float score))
                 {
-                    s_potentialTargets.Add(new FlexTargetListItem{ flexTarget = target, score = score });
+                    s_potentialTargets.Add(new FlexTargetListItem{ FlexTarget = target, Score = score });
                 }
             }
 
@@ -152,7 +152,7 @@ namespace Cyclic.FlexTargeting
             // return the first target that isn't LOS blocked
             foreach (var targetItem in s_potentialTargets)
             {
-                IFlexTarget target = targetItem.flexTarget;
+                IFlexTarget target = targetItem.FlexTarget;
 
                 if (!IsTargetLosBlocked(target, data.TargeterPosition, data.LosBufferRadius, data.LosLayerMask,
                         data.LosQueryTriggerInteraction))
@@ -242,7 +242,7 @@ namespace Cyclic.FlexTargeting
                     targetFilter.Invoke(context, target) &&
                     data.ScoreTarget(target, out float score))
                 {
-                    s_potentialTargets.Add(new FlexTargetListItem{ flexTarget = target, score = score });
+                    s_potentialTargets.Add(new FlexTargetListItem{ FlexTarget = target, Score = score });
                 }
             }
 
@@ -251,7 +251,7 @@ namespace Cyclic.FlexTargeting
             // return the first target that isn't LOS blocked
             foreach (var targetItem in s_potentialTargets)
             {
-                IFlexTarget target = targetItem.flexTarget;
+                IFlexTarget target = targetItem.FlexTarget;
 
                 if (!IsTargetLosBlocked(target, data.TargeterPosition, data.LosBufferRadius, data.LosLayerMask,
                         data.LosQueryTriggerInteraction))
@@ -352,7 +352,7 @@ namespace Cyclic.FlexTargeting
                     !IsTargetLosBlocked(target, data.TargeterPosition, data.LosBufferRadius, data.LosLayerMask,
                         data.LosQueryTriggerInteraction))
                 {
-                    s_potentialTargets.Add(new FlexTargetListItem{ flexTarget = target, score = score });
+                    s_potentialTargets.Add(new FlexTargetListItem{ FlexTarget = target, Score = score });
                 }
             }
 
@@ -362,7 +362,7 @@ namespace Cyclic.FlexTargeting
             int numTargetsAdded = 0;
             foreach (var targetItem in s_potentialTargets)
             {
-                bestTargets.Add(targetItem.flexTarget as TTarget);
+                bestTargets.Add(targetItem.FlexTarget as TTarget);
                 numTargetsAdded++;
             }
 
@@ -450,7 +450,7 @@ namespace Cyclic.FlexTargeting
                     !IsTargetLosBlocked(target, data.TargeterPosition, data.LosBufferRadius, data.LosLayerMask,
                         data.LosQueryTriggerInteraction))
                 {
-                    s_potentialTargets.Add(new FlexTargetListItem{ flexTarget = target, score = score });
+                    s_potentialTargets.Add(new FlexTargetListItem{ FlexTarget = target, Score = score });
                 }
             }
 
@@ -460,7 +460,7 @@ namespace Cyclic.FlexTargeting
             int numTargetsAdded = 0;
             foreach (var targetItem in s_potentialTargets)
             {
-                bestTargets.Add(targetItem.flexTarget as TTarget);
+                bestTargets.Add(targetItem.FlexTarget as TTarget);
                 numTargetsAdded++;
             }
 

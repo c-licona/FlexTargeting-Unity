@@ -58,7 +58,7 @@ namespace Cyclic.FlexTargeting.BuiltinRepository
             return false;
         }
 
-        public bool autoUnparentOnAwake = true;
+        public bool AutoUnparentOnAwake = true;
         private static BuiltinFlexTargetRepository s_instance = null;
         private bool _isApplicationQuitting = false;
 
@@ -110,7 +110,7 @@ namespace Cyclic.FlexTargeting.BuiltinRepository
             if (!Application.isPlaying)
                 return;
 
-            if (autoUnparentOnAwake)
+            if (AutoUnparentOnAwake)
                 transform.SetParent(null);
 
             if (s_instance == null)
