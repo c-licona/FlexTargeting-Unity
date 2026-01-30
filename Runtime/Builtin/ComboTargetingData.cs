@@ -9,47 +9,60 @@ namespace Cyclic.FlexTargeting.Builtin
     /// each band targets are sorted by direction
     /// </summary>
     [Serializable]
-    public class ComboTargetingData : IFlexData<IFlexTarget>
+    public class ComboTargetingData : IFlexData<IFlexTarget>, IFlexDataGizmo
     {
         [Header("References")]
-        [SerializeField] private TargeterOriginSource _targeterOriginSource = TargeterOriginSource.Transform;
-        [SerializeField] private Transform _targeterOrigin = null;
+        [Tooltip("Determine where targeter origin values are sourced from.")]
+        public TargeterOriginSource TargeterOriginSource = TargeterOriginSource.Transform;
+
+        [Tooltip("The transform to source targeter origin values from.")]
+        public Transform TargeterOrigin = null;
+
 
         [Header("Settings")]
-        [SerializeField, Min(0.0f)] private float _maxRange = 10.0f;
-        [SerializeField, Min(0.0f)] private float _halfAngle = 15.0f;
-        [SerializeField, Min(Single.Epsilon)] private float _rangeBandWidth = 10.0f;
+        [Tooltip("The maximum range at which targets will be considered.")]
+        [SerializeField, Min(0.0f)] protected float _maxRange = 10.0f;
+
+        [Tooltip("Targets will be considered if the angle between [targeter direction] and [vector from origin to " +
+                 "target] is less than or equal to this angle (degree) value. At 180 degrees, all targets in range " +
+                 "will be considered.")]
+        [SerializeField, Range(0.0f, 180.0f)] protected float _halfAngle = 15.0f;
+
+        [Tooltip("The size of each band from the targeter to the max range.")]
+        [SerializeField, Min(Single.Epsilon)] protected float _rangeBandWidth = 2.0f;
+
         [Tooltip("Defines a radius around the origin point from which LOS checks will begin. Use a non-zero value " +
                  "if there is a chance that LOS checks will be blocked by the targeter itself.")]
-        [SerializeField, Min(0.0f)] private float _losBufferRadius = 0.0f;
-        [SerializeField] private LayerMask _losLayerMask = Physics.AllLayers;
+        [SerializeField, Min(0.0f)] protected float _losBufferRadius = 0.0f;
 
-        public float MaxRange => _maxRange;
-        public float LosBufferRadius { get => _losBufferRadius; set => _losBufferRadius = value; }
-        public LayerMask LosLayerMask => _losLayerMask;
+        [Tooltip("The layers that will block the LOS raycasts. Set to None to ignore LOS checks.")]
+        [SerializeField] protected LayerMask _losLayerMask = Physics.DefaultRaycastLayers;
 
-        public TargeterOriginSource TargeterOriginSource { get => _targeterOriginSource; set => _targeterOriginSource = value; }
-        public Transform TargeterOrigin { get => _targeterOrigin; set => _targeterOrigin = value; }
-        public float HalfAngle { get => _halfAngle; set => _halfAngle = value; }
-        public float RangeBandWidth { get => _rangeBandWidth; set => _rangeBandWidth = value; }
-        public Vector3 ManualOriginPos { get; set; } = Vector3.zero;
-        public Vector3 ManualOriginDir { get; set; } = Vector3.zero;
+        [Tooltip("Determine whether the LOS raycasts hit triggers.")]
+        [SerializeField] protected QueryTriggerInteraction _losQueryTriggerInteraction = QueryTriggerInteraction.Ignore;
 
-        public Vector3 TargeterPosition => _targeterOriginSource switch
+        public virtual float MaxRange { get => _maxRange; set => _maxRange = value; }
+        public virtual float HalfAngle { get => _halfAngle; set => _halfAngle = value; }
+        public virtual float RangeBandWidth { get => _rangeBandWidth; set => _rangeBandWidth = value; }
+        public virtual float LosBufferRadius { get => _losBufferRadius; set => _losBufferRadius = value; }
+        public virtual LayerMask LosLayerMask { get => _losLayerMask; set => _losLayerMask = value; }
+        public virtual QueryTriggerInteraction LosQueryTriggerInteraction { get => _losQueryTriggerInteraction; set => _losQueryTriggerInteraction = value; }
+        public virtual Vector3 ManualOriginPos { get; set; } = Vector3.zero;
+        public virtual Vector3 ManualOriginDir { get; set; } = Vector3.zero;
+        public virtual Vector3 TargeterPosition => TargeterOriginSource switch
         {
-            TargeterOriginSource.Transform => _targeterOrigin.position,
+            TargeterOriginSource.Transform => TargeterOrigin.position,
             TargeterOriginSource.Manual => ManualOriginPos,
             _ => throw new ArgumentOutOfRangeException()
         };
-
-        public Vector3 TargeterDirection => _targeterOriginSource switch
+        public virtual Vector3 TargeterDirection => TargeterOriginSource switch
         {
-            TargeterOriginSource.Transform => _targeterOrigin.forward,
+            TargeterOriginSource.Transform => TargeterOrigin.forward,
             TargeterOriginSource.Manual => ManualOriginDir,
             _ => throw new ArgumentOutOfRangeException()
         };
 
-        public bool ScoreTarget(IFlexTarget target, out float score)
+        public virtual bool ScoreTarget(IFlexTarget target, out float score)
         {
             /*
              * Targets from the origin to max range are separated into discrete bands based on their distance, and each
@@ -78,7 +91,41 @@ namespace Cyclic.FlexTargeting.Builtin
             float angle = Vector3.Angle(targetPos - oPos, oForward);
             score = angle + (band * 180.0f);
 
-            return angle <= _halfAngle;
+            return angle <= HalfAngle;
+        }
+
+        public void DrawGizmos(Transform targeterTransform)
+        {
+#if UNITY_EDITOR
+            Transform transform = TargeterOriginSource switch
+            {
+                TargeterOriginSource.Transform => TargeterOrigin != null ? TargeterOrigin : targeterTransform,
+                TargeterOriginSource.Manual => targeterTransform,
+                _ => throw new ArgumentOutOfRangeException()
+            };
+
+            Vector3 origin = transform.position;
+            Vector3 direction = transform.forward;
+
+            Gizmos.DrawWireSphere(origin, _maxRange);
+            if (!Mathf.Approximately(_losBufferRadius, 0.0f)) Gizmos.DrawWireSphere(origin, _losBufferRadius);
+            Gizmos.DrawLine(origin, origin + direction * _maxRange);
+            if (_halfAngle > Mathf.Epsilon && _halfAngle < 180.0f)
+            {
+                Gizmos.DrawLine(origin, origin + (Quaternion.AngleAxis(_halfAngle, transform.up) * direction) * _maxRange);
+                Gizmos.DrawLine(origin, origin + (Quaternion.AngleAxis(-_halfAngle, transform.up) * direction) * _maxRange);
+            }
+
+            if (_rangeBandWidth > 0.01f) // avoid division by 0 and showing discs that are too small to be useful
+            {
+                int numBands = Mathf.FloorToInt(_maxRange / _rangeBandWidth);
+                numBands = Mathf.Clamp(numBands, 0, 20); // limit max gizmo discs to avoid tanking the editor
+                for (int i = 1; i < numBands + 1; i++)
+                {
+                    UnityEditor.Handles.DrawWireDisc(origin, transform.up, _rangeBandWidth * i);
+                }
+            }
+#endif
         }
     }
 }

@@ -56,6 +56,7 @@ namespace Cyclic.FlexTargeting.Builtin
 
         public virtual void DrawGizmos(Transform targeterTransform)
         {
+#if UNITY_EDITOR
             Vector3 origin = TargeterOriginSource switch
             {
                 TargeterOriginSource.Transform => TargeterOrigin != null ? TargeterOrigin.position : targeterTransform.position,
@@ -65,6 +66,7 @@ namespace Cyclic.FlexTargeting.Builtin
 
             Gizmos.DrawWireSphere(origin, _maxRange);
             if (!Mathf.Approximately(_losBufferRadius, 0.0f)) Gizmos.DrawWireSphere(origin, _losBufferRadius);
+#endif
         }
     }
 }

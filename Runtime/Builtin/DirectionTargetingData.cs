@@ -77,6 +77,7 @@ namespace Cyclic.FlexTargeting.Builtin
 
         public virtual void DrawGizmos(Transform targeterTransform)
         {
+#if UNITY_EDITOR
             Transform transform = TargeterOriginSource switch
             {
                 TargeterOriginSource.Transform => TargeterOrigin != null ? TargeterOrigin : targeterTransform,
@@ -95,6 +96,7 @@ namespace Cyclic.FlexTargeting.Builtin
                 Gizmos.DrawLine(origin, origin + (Quaternion.AngleAxis(_halfAngle, transform.up) * direction) * _maxRange);
                 Gizmos.DrawLine(origin, origin + (Quaternion.AngleAxis(-_halfAngle, transform.up) * direction) * _maxRange);
             }
+#endif
         }
     }
 }
