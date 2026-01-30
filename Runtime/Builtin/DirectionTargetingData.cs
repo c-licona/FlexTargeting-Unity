@@ -3,57 +3,63 @@ using UnityEngine;
 
 namespace Cyclic.FlexTargeting.Builtin
 {
-    public enum TargeterOriginSource
-    {
-        Transform,
-        Manual
-    }
-
     /// <summary>
     /// The most common flex targeting solution. Targets are collected within a certain range and then sorted by which
     /// target is most closely aligned with a certain direction. Any targets that are outside a cone that is defined
     /// by the targeting direction and a half angle value will be discarded.
     /// </summary>
     [Serializable]
-    public class DirectionTargetingData : IFlexData<IFlexTarget>
+    public class DirectionTargetingData : IFlexData<IFlexTarget>, IFlexDataGizmo
     {
         [Header("References")]
-        [SerializeField] private TargeterOriginSource _targeterOriginSource = TargeterOriginSource.Transform;
-        [SerializeField] private Transform _targeterOrigin = null;
+        [Tooltip("Determine where targeter origin values are sourced from.")]
+        public TargeterOriginSource TargeterOriginSource = TargeterOriginSource.Transform;
+
+        [Tooltip("The transform to source targeter origin values from.")]
+        public Transform TargeterOrigin = null;
+
 
         [Header("Settings")]
-        [SerializeField, Min(0.0f)] private float _maxRange = 10.0f;
-        [SerializeField, Min(0.0f)] private float _halfAngle = 15.0f;
+        [Tooltip("The maximum range at which targets will be considered.")]
+        [SerializeField, Min(0.0f)] protected float _maxRange = 10.0f;
+
+        [Tooltip("Targets will be considered if the angle between [targeter direction] and [vector from origin to " +
+                 "target] is less than or equal to this angle (degree) value. At 180 degrees, all targets in range " +
+                 "will be considered.")]
+        [SerializeField, Range(0.0f, 180.0f)] protected float _halfAngle = 15.0f;
+
         [Tooltip("Defines a radius around the origin point from which LOS checks will begin. Use a non-zero value " +
                  "if there is a chance that LOS checks will be blocked by the targeter itself.")]
-        [SerializeField, Min(0.0f)] private float _losBufferRadius = 0.0f;
-        [SerializeField] private LayerMask _losLayerMask = Physics.DefaultRaycastLayers;
+        [SerializeField, Min(0.0f)] protected float _losBufferRadius = 0.0f;
 
-        public float MaxRange { get => _maxRange; set => _maxRange = value; }
-        public float LosBufferRadius { get => _losBufferRadius; set => _losBufferRadius = value; }
-        public LayerMask LosLayerMask { get => _losLayerMask; set => _losLayerMask = value; }
+        [Tooltip("The layers that will block the LOS raycasts. Set to None to ignore LOS checks.")]
+        [SerializeField] protected LayerMask _losLayerMask = Physics.DefaultRaycastLayers;
 
-        public TargeterOriginSource TargeterOriginSource { get => _targeterOriginSource; set => _targeterOriginSource = value; }
-        public Transform TargeterOrigin { get => _targeterOrigin; set => _targeterOrigin = value; }
-        public float HalfAngle { get => _halfAngle; set => _halfAngle = value; }
-        public Vector3 ManualOriginPos { get; set; } = Vector3.zero;
-        public Vector3 ManualOriginDir { get; set; } = Vector3.zero;
+        [Tooltip("Determine whether the LOS raycasts hit triggers.")]
+        [SerializeField] protected QueryTriggerInteraction _losQueryTriggerInteraction = QueryTriggerInteraction.Ignore;
 
-        public Vector3 TargeterPosition => _targeterOriginSource switch
+
+        public virtual float MaxRange { get => _maxRange; set => _maxRange = value; }
+        public virtual float HalfAngle { get => _halfAngle; set => _halfAngle = value; }
+        public virtual float LosBufferRadius { get => _losBufferRadius; set => _losBufferRadius = value; }
+        public virtual LayerMask LosLayerMask { get => _losLayerMask; set => _losLayerMask = value; }
+        public virtual QueryTriggerInteraction LosQueryTriggerInteraction { get => _losQueryTriggerInteraction; set => _losQueryTriggerInteraction = value; }
+        public virtual Vector3 ManualOriginPos { get; set; } = Vector3.zero;
+        public virtual Vector3 ManualOriginDir { get; set; } = Vector3.zero;
+        public virtual Vector3 TargeterPosition => TargeterOriginSource switch
         {
-            TargeterOriginSource.Transform => _targeterOrigin.position,
+            TargeterOriginSource.Transform => TargeterOrigin.position,
             TargeterOriginSource.Manual => ManualOriginPos,
             _ => throw new ArgumentOutOfRangeException()
         };
-
-        public Vector3 TargeterDirection => _targeterOriginSource switch
+        public virtual Vector3 TargeterDirection => TargeterOriginSource switch
         {
-            TargeterOriginSource.Transform => _targeterOrigin.forward,
+            TargeterOriginSource.Transform => TargeterOrigin.forward,
             TargeterOriginSource.Manual => ManualOriginDir,
             _ => throw new ArgumentOutOfRangeException()
         };
 
-        public bool ScoreTarget(IFlexTarget target, out float score)
+        public virtual bool ScoreTarget(IFlexTarget target, out float score)
         {
             /*
              * The angle between the targeting origin direction and the vector from origin to target is used as the
@@ -66,7 +72,29 @@ namespace Cyclic.FlexTargeting.Builtin
             Vector3 targetPos = target.TargetPosition;
 
             score = Vector3.Angle(targetPos - oPos, oForward);
-            return score <= _halfAngle;
+            return score <= HalfAngle;
+        }
+
+        public virtual void DrawGizmos(Transform targeterTransform)
+        {
+            Transform transform = TargeterOriginSource switch
+            {
+                TargeterOriginSource.Transform => TargeterOrigin != null ? TargeterOrigin : targeterTransform,
+                TargeterOriginSource.Manual => targeterTransform,
+                _ => throw new ArgumentOutOfRangeException()
+            };
+
+            Vector3 origin = transform.position;
+            Vector3 direction = transform.forward;
+
+            Gizmos.DrawWireSphere(origin, _maxRange);
+            if (!Mathf.Approximately(_losBufferRadius, 0.0f)) Gizmos.DrawWireSphere(origin, _losBufferRadius);
+            Gizmos.DrawLine(origin, origin + direction * _maxRange);
+            if (_halfAngle > Mathf.Epsilon && _halfAngle < 180.0f)
+            {
+                Gizmos.DrawLine(origin, origin + (Quaternion.AngleAxis(_halfAngle, transform.up) * direction) * _maxRange);
+                Gizmos.DrawLine(origin, origin + (Quaternion.AngleAxis(-_halfAngle, transform.up) * direction) * _maxRange);
+            }
         }
     }
 }
