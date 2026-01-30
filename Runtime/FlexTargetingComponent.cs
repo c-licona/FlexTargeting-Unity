@@ -12,7 +12,7 @@ namespace Cyclic.FlexTargeting
     public class FlexTargetingComponent<TFlexData> : MonoBehaviour where TFlexData : class, IFlexData<IFlexTarget>, new()
     {
         [Header("Settings")]
-        [SerializeField] private TFlexData _data = new();
+        [SerializeField] protected TFlexData _data = new();
 
         public bool DetermineBestTarget<TTarget>(out TTarget bestTarget) where TTarget : class, IFlexTarget => FlexTargetingCore.DetermineBestTarget(_data, out bestTarget);
         public bool DetermineBestTarget<TTarget>(out TTarget bestTarget, IReadOnlyList<TTarget> inputTargets) where TTarget : class, IFlexTarget => FlexTargetingCore.DetermineBestTarget(_data, out bestTarget, inputTargets);
