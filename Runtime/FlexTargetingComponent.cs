@@ -13,6 +13,13 @@ namespace Cyclic.FlexTargeting
     {
         [Header("Settings")]
         [SerializeField] protected TFlexData _data = new();
+        public TFlexData Data => _data;
+
+        /// <summary>
+        /// Replace the referenced data with new data
+        /// </summary>
+        /// <param name="newData">The new data to use.</param>
+        public void ReplaceData(TFlexData newData) => _data = newData;
 
         public bool DetermineBestTarget<TTarget>(out TTarget bestTarget) where TTarget : class, IFlexTarget => FlexTargetingCore.DetermineBestTarget(_data, out bestTarget);
         public bool DetermineBestTarget<TTarget>(out TTarget bestTarget, IReadOnlyList<TTarget> inputTargets) where TTarget : class, IFlexTarget => FlexTargetingCore.DetermineBestTarget(_data, out bestTarget, inputTargets);

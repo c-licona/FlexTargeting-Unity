@@ -14,7 +14,7 @@ namespace Cyclic.FlexTargeting
     /// </example>
     public abstract class FlexTargetComponent<TSelf> : MonoBehaviour, IFlexTarget where TSelf : FlexTargetComponent<TSelf>
     {
-        private enum RegisterWhen
+        protected enum RegisterWhen
         {
             [Tooltip("This target gets registered to the repository on Awake, and unregistered on Destroy.")]
             OnAwake,
@@ -24,9 +24,9 @@ namespace Cyclic.FlexTargeting
             Manual
         }
 
-        [Header("Settings")]
+        [Header("Flex Target Settings")]
         [Tooltip("Set if and when this target automatically registers itself with the target repository.")]
-        [SerializeField] private RegisterWhen _registerWhen = RegisterWhen.OnAwake;
+        [SerializeField] protected RegisterWhen _registerWhen = RegisterWhen.OnAwake;
 
         protected virtual void Awake()
         {
