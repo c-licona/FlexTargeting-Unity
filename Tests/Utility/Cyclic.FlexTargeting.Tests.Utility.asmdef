@@ -1,0 +1,14 @@
+{
+    "name": "Cyclic.FlexTargeting.Tests.Utility",
+    "rootNamespace": "Cyclic.FlexTargeting.Tests.Utility",
+    "references": [],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

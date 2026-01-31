@@ -25,10 +25,17 @@ namespace Cyclic.FlexTargeting
         Vector3 TargetPosition { get; }
 
         /// <summary>
-        /// The line-of-sight(LOS) radius. During LOS checks, the raycast to this target will stop early by this radius
-        /// distance. If you imagine a sphere with this radius around the target, the raycast will stop at the surface
-        /// if this imaginary sphere. This is useful so that the LOS check doesn't hit the target itself.
+        /// <para>
+        /// Distance value used to offset the line-of-sight (LOS) ray on the TARGET side. This is helpful for making
+        /// sure the LOS ray does not intersect with the targets geometry. During LOS checks, the raycast to this
+        /// target will stop early by this radius distance. If you imagine a sphere with this radius around the target,
+        /// the raycast will stop at the surface if this imaginary sphere. Make sure to set this value so that the
+        /// imaginary sphere sufficiently envelops most of the target.
+        /// </para>
+        /// <para>
+        /// If the targeter is so close that it is within this radius, the LOS check automatically passes.
+        /// </para>
         /// </summary>
-        float LosRadius { get; }
+        float LosBufferRadius { get; }
     }
 }

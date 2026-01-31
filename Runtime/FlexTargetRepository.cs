@@ -1,127 +1,84 @@
-﻿using Cyclic.FlexTargeting.Utility;
-using System;
 using System.Collections.Generic;
-using UnityEngine;
 
 namespace Cyclic.FlexTargeting
 {
-    public interface IFlexTargetRepository<T> : IDisposable where T : IFlexTarget
+    /// <summary>
+    /// Target repositories provide access to flex targets of certain types. A custom repository can be used for the
+    /// project by implementing this interface and replacing the global repository in <see cref="FlexTargetRepository"/>
+    /// with the <see cref="FlexTargetRepository.ReplaceRepository"/> method.
+    /// </summary>
+    public interface IFlexTargetRepository
     {
-        List<T> Targets();
-        void AddTarget(T targetToAdd);
-        void RemoveTarget(T targetToRemove);
-    }
-
-    public class FlexTargetRepository : PersistentSingleton<FlexTargetRepository>
-    {
-        private Dictionary<Type, IDisposable> _repositories = new();
-
-        public IFlexTargetRepository<T> OfType<T>() where T : class, IFlexTarget
-        {
-            if (!_repositories.ContainsKey(typeof(T)))
-            {
-                IFlexTargetRepository<T> repository = new InternalFlexTargetRepository<T>();
-                _repositories.Add(typeof(T), repository);
-            }
-
-            return InternalFlexTargetRepository<T>.Instance;
-        }
-
-        public bool TryOfType<T>(out IFlexTargetRepository<T> repository) where T : class, IFlexTarget
-        {
-            if (!IsApplicationQuitting)
-            {
-                repository = OfType<T>();
-                return true;
-            }
-
-            repository = null;
-            return false;
-        }
-
-        protected override void OnApplicationQuit()
-        {
-            base.OnApplicationQuit();
-            foreach (var repository in _repositories)
-            {
-                repository.Value.Dispose();
-            }
-        }
-    }
-
-    public class InternalFlexTargetRepository<T> : IFlexTargetRepository<T>
-        where T : class, IFlexTarget
-    {
-        private List<T> _targets = new();
-
-        public List<T> Targets() => _targets;
-        public void AddTarget(T targetToAdd) => _targets.Add(targetToAdd);
-        public void RemoveTarget(T targetToRemove) => _targets.Remove(targetToRemove);
-
-        public void Dispose()
-        {
-            _isApplicationQuitting = true;
-            _targets.Clear();
-        }
-
-        private static InternalFlexTargetRepository<T> instance = null;
-        private static bool _isApplicationQuitting = false;
-
-        public static bool IsApplicationQuitting => _isApplicationQuitting;
-        public static bool HasInstance => instance != null;
+        /// <summary>
+        /// Get the list of all targets currently in the repository
+        /// </summary>
+        /// <typeparam name="TTarget">The type of flex target to get a list of.</typeparam>
+        /// <returns>Returns a read only list of targets of only type <typeparamref name="TTarget"/></returns>
+        IReadOnlyList<TTarget> GetTargets<TTarget>() where TTarget : class, IFlexTarget;
 
         /// <summary>
-        /// Tries to get the current instance only if it currently exists and the application isn't quitting. This
-        /// method call will not trigger the creation of a new instance. This is most useful if theres a possibility
-        /// that the application is quitting.
+        /// Add the target to the repository.
         /// </summary>
-        /// <param name="outInstance">The current singleton instance</param>
-        /// <returns>Returns true if there is currently an instance and the application isn't quitting.</returns>
-        public static bool TryGetInstance(out InternalFlexTargetRepository<T> outInstance)
-        {
-            if (HasInstance && !IsApplicationQuitting)
-            {
-                outInstance = instance;
-                return true;
-            }
+        /// <param name="targetToAdd">The target to add to the repository.</param>
+        /// <typeparam name="TTarget">The specific type of flex target that will be added.</typeparam>
+        void AddTarget<TTarget>(TTarget targetToAdd) where TTarget : class, IFlexTarget;
 
-            outInstance = null;
-            return false;
+        /// <summary>
+        /// Removes the target from the repository.
+        /// </summary>
+        /// <param name="targetToRemove">The target to remove from the repository.</param>
+        /// <typeparam name="TTarget">The specific type of flex target that will be removed.</typeparam>
+        void RemoveTarget<TTarget>(TTarget targetToRemove) where TTarget : class, IFlexTarget;
+    }
+
+    /// <summary>
+    /// Access to the current global flex target repository. This package provides a builtin repository, with the option
+    /// to replace it with your own custom solution using the <see cref="ReplaceRepository"/> function. The repository
+    /// should never be null and is used by the core methods that do not provide an input list of targets.
+    /// </summary>
+    public static class FlexTargetRepository
+    {
+        private static IFlexTargetRepository s_repository = new BuiltinRepository.BuiltinFlexTargetRepositoryAccessor();
+
+        /// <summary>
+        /// Get a list of all the targets of type <typeparamref name="TTarget"/> from the repository.
+        /// </summary>
+        /// <typeparam name="TTarget">The specific type of flex target to get a list of.</typeparam>
+        /// <returns>Returns a readonly list, typically for iteration through the core methods.</returns>
+        public static IReadOnlyList<TTarget> GetTargets<TTarget>() where TTarget : class, IFlexTarget
+        {
+            return s_repository.GetTargets<TTarget>();
         }
 
-        public static InternalFlexTargetRepository<T> Instance
+        /// <summary>
+        /// Add the target of type <typeparamref name="TTarget"/> to the repository. Ensure that this target is removed
+        /// from the repository with <see cref="RemoveTarget"/>.
+        /// </summary>
+        /// <param name="targetToAdd">The target to add to the repository.</param>
+        /// <typeparam name="TTarget">The specific type of flex target to add to the repository.</typeparam>
+        public static void AddTarget<TTarget>(TTarget targetToAdd) where TTarget : class, IFlexTarget
         {
-            get
-            {
-                // do not attempt to create a new instance is the application is quitting
-                if (instance == null && !IsApplicationQuitting)
-                {
-                    instance = new InternalFlexTargetRepository<T>();
-                }
-
-                return instance;
-            }
+            s_repository.AddTarget(targetToAdd);
         }
 
-        public InternalFlexTargetRepository() => InitializeSingleton();
-
-        private void InitializeSingleton()
+        /// <summary>
+        /// Remove the target of type <typeparamref name="TTarget"/> from the repository.
+        /// </summary>
+        /// <param name="targetToRemove">The target to remove from the repository.</param>
+        /// <typeparam name="TTarget">The specific type of flex target to remove from the repository.</typeparam>
+        public static void RemoveTarget<TTarget>(TTarget targetToRemove) where TTarget : class, IFlexTarget
         {
-            if (_isApplicationQuitting) return;
+            s_repository.RemoveTarget(targetToRemove);
+        }
 
-            if (instance == null)
-            {
-                instance = this;
-            }
-            else
-            {
-                if (instance != this)
-                {
-                    // Destroy(gameObject);
-                    this.Dispose();
-                    Debug.Log("Destroyed another copy of this singleton");
-                }
-            }
+        /// <summary>
+        /// Replace the current repository with a custom solution. Targets will be added and removed from your new
+        /// repository. Target lists from your new repository will be retrieved by the core methods.
+        /// </summary>
+        /// <param name="repository">The new repository to use throughout the project.</param>
+        public static void ReplaceRepository(IFlexTargetRepository repository)
+        {
+            s_repository = repository;
         }
     }
 }

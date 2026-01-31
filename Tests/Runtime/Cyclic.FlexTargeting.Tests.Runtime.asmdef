@@ -1,5 +1,5 @@
 {
-    "name": "Cyclic.FlexTargeting.Tests.Editor",
+    "name": "Cyclic.FlexTargeting.Tests.Runtime",
     "rootNamespace": "",
     "references": [
         "UnityEngine.TestRunner",
@@ -7,9 +7,7 @@
         "Cyclic.FlexTargeting",
         "Cyclic.FlexTargeting.Tests.Utility"
     ],
-    "includePlatforms": [
-        "Editor"
-    ],
+    "includePlatforms": [],
     "excludePlatforms": [],
     "allowUnsafeCode": false,
     "overrideReferences": true,
