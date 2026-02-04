@@ -176,8 +176,8 @@ namespace Cyclic.FlexTargeting
             {
                 IFlexTarget target = targetItem.FlexTarget;
 
-                if (!IsTargetLosBlocked(target, data.TargeterPosition, data.LosBufferRadius, data.LosLayerMask,
-                        data.LosQueryTriggerInteraction))
+                if (!IsTargetLosBlocked(target, data.TargeterPosition, data.LosRaySize, data.LosBufferRadius,
+                        data.LosLayerMask, data.LosQueryTriggerInteraction))
                 {
                     bestTarget = target as TTarget;
                     return true;
@@ -275,8 +275,8 @@ namespace Cyclic.FlexTargeting
             {
                 IFlexTarget target = targetItem.FlexTarget;
 
-                if (!IsTargetLosBlocked(target, data.TargeterPosition, data.LosBufferRadius, data.LosLayerMask,
-                        data.LosQueryTriggerInteraction))
+                if (!IsTargetLosBlocked(target, data.TargeterPosition, data.LosRaySize, data.LosBufferRadius,
+                        data.LosLayerMask, data.LosQueryTriggerInteraction))
                 {
                     bestTarget = target as TTarget;
                     return true;
@@ -371,8 +371,8 @@ namespace Cyclic.FlexTargeting
                 if (data.DoesPassFilter(target) &&
                     targetFilter.Invoke(target) &&
                     data.ScoreTarget(target, out float score) &&
-                    !IsTargetLosBlocked(target, data.TargeterPosition, data.LosBufferRadius, data.LosLayerMask,
-                        data.LosQueryTriggerInteraction))
+                    !IsTargetLosBlocked(target, data.TargeterPosition, data.LosRaySize, data.LosBufferRadius,
+                        data.LosLayerMask, data.LosQueryTriggerInteraction))
                 {
                     s_potentialTargets.Add(new FlexTargetListItem{ FlexTarget = target, Score = score });
                 }
@@ -469,8 +469,8 @@ namespace Cyclic.FlexTargeting
                 if (data.DoesPassFilter(target) &&
                     targetFilter.Invoke(context, target) &&
                     data.ScoreTarget(target, out float score) &&
-                    !IsTargetLosBlocked(target, data.TargeterPosition, data.LosBufferRadius, data.LosLayerMask,
-                        data.LosQueryTriggerInteraction))
+                    !IsTargetLosBlocked(target, data.TargeterPosition, data.LosRaySize, data.LosBufferRadius,
+                        data.LosLayerMask, data.LosQueryTriggerInteraction))
                 {
                     s_potentialTargets.Add(new FlexTargetListItem{ FlexTarget = target, Score = score });
                 }
@@ -498,6 +498,8 @@ namespace Cyclic.FlexTargeting
         /// </summary>
         /// <param name="target">The target we are checking</param>
         /// <param name="targeterPosition">The position of the targeter</param>
+        /// <param name="losRaySize">If this value is 0.0, a raycast will be used. Otherwise this will be the radius
+        /// of a sphere used in a spherecast.</param>
         /// <param name="losBufferRadius">The LOS buffer radius of the targeter</param>
         /// <param name="losLayerMask">The layer mask that will block LOS</param>
         /// <param name="losQueryTriggerInteraction">The QueryTriggerInteraction to use for the LOS check</param>
@@ -505,6 +507,7 @@ namespace Cyclic.FlexTargeting
         /// Returns false otherwise. Also returns false if the data has specified not to care about LOS.</returns>
         private static bool IsTargetLosBlocked(IFlexTarget target,
             Vector3 targeterPosition,
+            float losRaySize,
             float losBufferRadius,
             LayerMask losLayerMask,
             QueryTriggerInteraction losQueryTriggerInteraction)
@@ -518,13 +521,29 @@ namespace Cyclic.FlexTargeting
             // if a target is so close that the distance is non-positive than we consider it not LOS blocked
             if (rayDistance <= Mathf.Epsilon) return false;
 
-            int numHits = Physics.RaycastNonAlloc(
-                origin: origin + (oToTarget.normalized * losBufferRadius),
-                direction: oToTarget.normalized,
-                s_losResults,
-                rayDistance,
-                losLayerMask.value,
-                losQueryTriggerInteraction);
+            int numHits;
+            // sphere cast with radius of 0 results in undefined output, so use raycast in that case
+            if (losRaySize > Mathf.Epsilon)
+            {
+                numHits = Physics.SphereCastNonAlloc(
+                    origin: origin + (oToTarget.normalized * losBufferRadius),
+                    radius: losRaySize,
+                    direction: oToTarget.normalized,
+                    s_losResults,
+                    rayDistance,
+                    losLayerMask.value,
+                    losQueryTriggerInteraction);
+            }
+            else
+            {
+                numHits = Physics.RaycastNonAlloc(
+                    origin: origin + (oToTarget.normalized * losBufferRadius),
+                    direction: oToTarget.normalized,
+                    s_losResults,
+                    rayDistance,
+                    losLayerMask.value,
+                    losQueryTriggerInteraction);
+            }
 
             // if there are any hits then the target is LOS blocked
             return numHits > 0;
