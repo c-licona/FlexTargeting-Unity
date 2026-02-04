@@ -54,6 +54,25 @@ namespace Cyclic.FlexTargeting
 
         public static readonly Comparison<FlexTargetListItem> SortBySmallestScore = (x, y) => x.Score.CompareTo(y.Score);
         public static readonly Comparison<FlexTargetListItem> SortByLargestScore = (x, y) => y.Score.CompareTo(x.Score);
+
+        /// <summary>
+        /// For advanced debugging
+        /// </summary>
+        public static class Debug
+        {
+            /// <summary>
+            /// Returns the internal list of <see cref="FlexTargetListItem"/>s from <see cref="FlexTargetingCore"/>
+            /// which was used to sort and determine the best targets. Each item in this list contains every previous
+            /// potential target from the last core method call, as well as the score value that was calculated for
+            /// that target. This can be a useful debugging tool by getting this list immediately after a core method
+            /// call, and examining the list of targets and their associated score values.
+            /// </summary>
+            /// <example>
+            /// One potential use case for this is to use a core method, get this list, and display every score value
+            /// over each of the targets in-game to visually debug how they are getting scored at runtime.
+            /// </example>
+            public static IReadOnlyList<FlexTargetListItem> LastScoredTargetList => FlexTargetingCore.s_potentialTargets;
+        }
     }
 
     /// <summary>
@@ -61,7 +80,7 @@ namespace Cyclic.FlexTargeting
     /// </summary>
     public static class FlexTargetingCore
     {
-        private static readonly List<FlexTargetListItem> s_potentialTargets = new();
+        internal static readonly List<FlexTargetListItem> s_potentialTargets = new();
         private static readonly RaycastHit[] s_losResults = new RaycastHit[1];
         private static readonly TargetFilter<IFlexTarget> s_nullFilter = _ => true;
 
