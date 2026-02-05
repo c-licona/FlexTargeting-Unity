@@ -29,6 +29,9 @@ namespace Cyclic.FlexTargeting.Builtin
         [Tooltip(FlexTargetingTooltips.HalfAngle)]
         [SerializeField, Range(0.0f, 180.0f)] protected float _halfAngle = 15.0f;
 
+        [Tooltip(FlexTargetingTooltips.LosRaySize)]
+        [SerializeField, Min(0.0f)] protected float _losRaySize = 0.0f;
+
         [Tooltip(FlexTargetingTooltips.TargeterLosBufferRadius)]
         [SerializeField, Min(0.0f)] protected float _losBufferRadius = 0.0f;
 
@@ -41,6 +44,7 @@ namespace Cyclic.FlexTargeting.Builtin
 
         public virtual float MaxRange { get => _maxRange; set => _maxRange = value; }
         public virtual float HalfAngle { get => _halfAngle; set => _halfAngle = value; }
+        public virtual float LosRaySize { get => _losRaySize; set => _losRaySize = value; }
         public virtual float LosBufferRadius { get => _losBufferRadius; set => _losBufferRadius = value; }
         public virtual LayerMask LosLayerMask { get => _losLayerMask; set => _losLayerMask = value; }
         public virtual QueryTriggerInteraction LosQueryTriggerInteraction { get => _losQueryTriggerInteraction; set => _losQueryTriggerInteraction = value; }
