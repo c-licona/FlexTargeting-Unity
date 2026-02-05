@@ -17,6 +17,7 @@ This version has some backward **incompatible** changes.
 ### Added
 - Added static class: `FlexTargetingExtras.Debug` , and static getter: `LastScoredTargetList`. This gives advanced access to the internal list of potential targets and their associated score values that was just populated and sorted by the last called core method. Useful for debugging what score values are being assigned to targets.
 - Added support for the line-of-sight check either using a Raycast or Spherecast. `IFlexData` now has a `LosRaySize` getter. It has a default implementation returning 0, so this change will not break backward compatibility. A value of 0 makes the LOS check use a Raycast. Otherwise, this value will define the sphere radius in a Spherecast.
+    - Also added `_losRaySize` serialized field and getter/setter to all builtin targeting data
 - Added `FlexTargetingTooltips` static class with const strings containing common tooltips for flex data and flex target fields.
 
 ## [0.2.0] - 2026-01-31
