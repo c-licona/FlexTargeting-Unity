@@ -7,7 +7,9 @@ namespace Cyclic.FlexTargeting
 {
     /// <summary>
     /// A generic MonoBehavior version of a <see cref="IFlexTarget"/> that can automatically register/unregister
-    /// itself to the <see cref="FlexTargetRepository"/> on awake/destroy, enable/disable or manually.
+    /// itself to the <see cref="FlexTargetRepository"/> on awake/destroy, enable/disable or manually. This is purely
+    /// for convenience to skip some boilerplate for registering a target. If you want full control and more flexibility
+    /// then it is recommended to just implement <see cref="IFlexTarget"/> instead of subclassing this class.
     /// </summary>
     /// <typeparam name="TSelf">This type should be the derived type itself so that it can be properly stored
     /// in the <see cref="FlexTargetRepository"/></typeparam>
@@ -36,7 +38,10 @@ namespace Cyclic.FlexTargeting
         /// <summary>
         /// Determine when this target component registers itself with the <see cref="FlexTargetRepository"/>
         /// </summary>
-        protected virtual RegisterWhen RegisterTargetWhen => RegisterWhen.OnAwake;
+        protected virtual RegisterWhen RegisterTargetWhen => RegisterWhen.OnEnable;
+        public abstract bool IsTargetValid { get; }
+        public abstract Vector3 TargetPosition { get; }
+        public abstract float LosBufferRadius { get; }
 
         protected virtual void Awake()
         {
@@ -69,18 +74,5 @@ namespace Cyclic.FlexTargeting
                 FlexTargetRepository.RemoveTarget(this as TSelf);
             }
         }
-
-        // the default implementation of RegisterTargetWhen is to register on awake. So the most common default
-        // implementation of this method is to simply return if this target is currently enabled.
-        public virtual bool IsTargetValid => enabled;
-        public abstract Vector3 TargetPosition { get; }
-        public abstract float LosBufferRadius { get; }
-
-        #if UNITY_EDITOR
-        protected virtual void OnDrawGizmosSelected()
-        {
-            Gizmos.DrawWireSphere(TargetPosition, LosBufferRadius);
-        }
-        #endif
     }
 }

@@ -15,6 +15,11 @@ namespace Cyclic.FlexTargeting
         /// Determines whether this target should be considered as a potential target in any
         /// <see cref="FlexTargetingCore"/> methods.
         /// </summary>
+        /// <remarks>
+        /// The most common return value here is "true" when the target is registered OnEnable, or returning the
+        /// "enabled" state of the MonoBehavior if registering OnAwake. Of course for custom cases this should return
+        /// whatever you need it to.
+        /// </remarks>
         /// <value>
         ///     If true is returned, this target will continue through the determination process of
         ///     <see cref="FlexTargetingCore"/> methods. If false is returned, this target will be filtered out and not

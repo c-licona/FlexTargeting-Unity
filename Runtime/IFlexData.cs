@@ -36,6 +36,12 @@ namespace Cyclic.FlexTargeting
         float MaxRange { get; }
 
         /// <summary>
+        /// The line-of-sight (LOS) check can use either a raycast or a sphere cast. If this value is 0.0, a raycast
+        /// will be used. Otherwise, this value will represent the radius of the sphere that is cast.
+        /// </summary>
+        float LosRaySize => 0.0f;
+
+        /// <summary>
         /// <para>
         /// Distance value used to offset the line-of-sight (LOS) ray on the TARGETER side. This is helpful for making
         /// sure the LOS ray does not intersect with the targeters own geometry. See <see cref="LosLayerMask"/> if LOS

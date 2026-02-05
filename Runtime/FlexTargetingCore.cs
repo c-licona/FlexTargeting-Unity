@@ -54,6 +54,25 @@ namespace Cyclic.FlexTargeting
 
         public static readonly Comparison<FlexTargetListItem> SortBySmallestScore = (x, y) => x.Score.CompareTo(y.Score);
         public static readonly Comparison<FlexTargetListItem> SortByLargestScore = (x, y) => y.Score.CompareTo(x.Score);
+
+        /// <summary>
+        /// For advanced debugging
+        /// </summary>
+        public static class Debug
+        {
+            /// <summary>
+            /// Returns the internal list of <see cref="FlexTargetListItem"/>s from <see cref="FlexTargetingCore"/>
+            /// which was used to sort and determine the best targets. Each item in this list contains every previous
+            /// potential target from the last core method call, as well as the score value that was calculated for
+            /// that target. This can be a useful debugging tool by getting this list immediately after a core method
+            /// call, and examining the list of targets and their associated score values.
+            /// </summary>
+            /// <example>
+            /// One potential use case for this is to use a core method, get this list, and display every score value
+            /// over each of the targets in-game to visually debug how they are getting scored at runtime.
+            /// </example>
+            public static IReadOnlyList<FlexTargetListItem> LastScoredTargetList => FlexTargetingCore.s_potentialTargets;
+        }
     }
 
     /// <summary>
@@ -61,7 +80,7 @@ namespace Cyclic.FlexTargeting
     /// </summary>
     public static class FlexTargetingCore
     {
-        private static readonly List<FlexTargetListItem> s_potentialTargets = new();
+        internal static readonly List<FlexTargetListItem> s_potentialTargets = new();
         private static readonly RaycastHit[] s_losResults = new RaycastHit[1];
         private static readonly TargetFilter<IFlexTarget> s_nullFilter = _ => true;
 
@@ -157,8 +176,8 @@ namespace Cyclic.FlexTargeting
             {
                 IFlexTarget target = targetItem.FlexTarget;
 
-                if (!IsTargetLosBlocked(target, data.TargeterPosition, data.LosBufferRadius, data.LosLayerMask,
-                        data.LosQueryTriggerInteraction))
+                if (!IsTargetLosBlocked(target, data.TargeterPosition, data.LosRaySize, data.LosBufferRadius,
+                        data.LosLayerMask, data.LosQueryTriggerInteraction))
                 {
                     bestTarget = target as TTarget;
                     return true;
@@ -256,8 +275,8 @@ namespace Cyclic.FlexTargeting
             {
                 IFlexTarget target = targetItem.FlexTarget;
 
-                if (!IsTargetLosBlocked(target, data.TargeterPosition, data.LosBufferRadius, data.LosLayerMask,
-                        data.LosQueryTriggerInteraction))
+                if (!IsTargetLosBlocked(target, data.TargeterPosition, data.LosRaySize, data.LosBufferRadius,
+                        data.LosLayerMask, data.LosQueryTriggerInteraction))
                 {
                     bestTarget = target as TTarget;
                     return true;
@@ -352,8 +371,8 @@ namespace Cyclic.FlexTargeting
                 if (data.DoesPassFilter(target) &&
                     targetFilter.Invoke(target) &&
                     data.ScoreTarget(target, out float score) &&
-                    !IsTargetLosBlocked(target, data.TargeterPosition, data.LosBufferRadius, data.LosLayerMask,
-                        data.LosQueryTriggerInteraction))
+                    !IsTargetLosBlocked(target, data.TargeterPosition, data.LosRaySize, data.LosBufferRadius,
+                        data.LosLayerMask, data.LosQueryTriggerInteraction))
                 {
                     s_potentialTargets.Add(new FlexTargetListItem{ FlexTarget = target, Score = score });
                 }
@@ -450,8 +469,8 @@ namespace Cyclic.FlexTargeting
                 if (data.DoesPassFilter(target) &&
                     targetFilter.Invoke(context, target) &&
                     data.ScoreTarget(target, out float score) &&
-                    !IsTargetLosBlocked(target, data.TargeterPosition, data.LosBufferRadius, data.LosLayerMask,
-                        data.LosQueryTriggerInteraction))
+                    !IsTargetLosBlocked(target, data.TargeterPosition, data.LosRaySize, data.LosBufferRadius,
+                        data.LosLayerMask, data.LosQueryTriggerInteraction))
                 {
                     s_potentialTargets.Add(new FlexTargetListItem{ FlexTarget = target, Score = score });
                 }
@@ -479,6 +498,8 @@ namespace Cyclic.FlexTargeting
         /// </summary>
         /// <param name="target">The target we are checking</param>
         /// <param name="targeterPosition">The position of the targeter</param>
+        /// <param name="losRaySize">If this value is 0.0, a raycast will be used. Otherwise this will be the radius
+        /// of a sphere used in a spherecast.</param>
         /// <param name="losBufferRadius">The LOS buffer radius of the targeter</param>
         /// <param name="losLayerMask">The layer mask that will block LOS</param>
         /// <param name="losQueryTriggerInteraction">The QueryTriggerInteraction to use for the LOS check</param>
@@ -486,6 +507,7 @@ namespace Cyclic.FlexTargeting
         /// Returns false otherwise. Also returns false if the data has specified not to care about LOS.</returns>
         private static bool IsTargetLosBlocked(IFlexTarget target,
             Vector3 targeterPosition,
+            float losRaySize,
             float losBufferRadius,
             LayerMask losLayerMask,
             QueryTriggerInteraction losQueryTriggerInteraction)
@@ -499,13 +521,29 @@ namespace Cyclic.FlexTargeting
             // if a target is so close that the distance is non-positive than we consider it not LOS blocked
             if (rayDistance <= Mathf.Epsilon) return false;
 
-            int numHits = Physics.RaycastNonAlloc(
-                origin: origin + (oToTarget.normalized * losBufferRadius),
-                direction: oToTarget.normalized,
-                s_losResults,
-                rayDistance,
-                losLayerMask.value,
-                losQueryTriggerInteraction);
+            int numHits;
+            // sphere cast with radius of 0 results in undefined output, so use raycast in that case
+            if (losRaySize > Mathf.Epsilon)
+            {
+                numHits = Physics.SphereCastNonAlloc(
+                    origin: origin + (oToTarget.normalized * losBufferRadius),
+                    radius: losRaySize,
+                    direction: oToTarget.normalized,
+                    s_losResults,
+                    rayDistance,
+                    losLayerMask.value,
+                    losQueryTriggerInteraction);
+            }
+            else
+            {
+                numHits = Physics.RaycastNonAlloc(
+                    origin: origin + (oToTarget.normalized * losBufferRadius),
+                    direction: oToTarget.normalized,
+                    s_losResults,
+                    rayDistance,
+                    losLayerMask.value,
+                    losQueryTriggerInteraction);
+            }
 
             // if there are any hits then the target is LOS blocked
             return numHits > 0;
