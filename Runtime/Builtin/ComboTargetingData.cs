@@ -15,34 +15,32 @@ namespace Cyclic.FlexTargeting.Builtin
     public class ComboTargetingData : IFlexData<IFlexTarget>, IFlexDataGizmo
     {
         [Header("References")]
-        [Tooltip("Determine where targeter origin values are sourced from.")]
+        [Tooltip(FlexTargetingTooltips.TargeterOriginSource)]
         public TargeterOriginSource TargeterOriginSource = TargeterOriginSource.Transform;
 
-        [Tooltip("The transform to source targeter origin values from.")]
+        [Tooltip(FlexTargetingTooltips.TargeterOrigin)]
         public Transform TargeterOrigin = null;
 
 
         [Header("Settings")]
-        [Tooltip("The maximum range at which targets will be considered.")]
+        [Tooltip(FlexTargetingTooltips.MaxRange)]
         [SerializeField, Min(0.0f)] protected float _maxRange = 10.0f;
 
-        [Tooltip("Targets will be considered if the angle between [targeter direction] and [vector from origin to " +
-                 "target] is less than or equal to this angle (degree) value. At 180 degrees, all targets in range " +
-                 "will be considered.")]
+        [Tooltip(FlexTargetingTooltips.HalfAngle)]
         [SerializeField, Range(0.0f, 180.0f)] protected float _halfAngle = 15.0f;
 
-        [Tooltip("The size of each band from the targeter to the max range.")]
+        [Tooltip(FlexTargetingTooltips.RangeBandWidth)]
         [SerializeField, Min(Single.Epsilon)] protected float _rangeBandWidth = 2.0f;
 
-        [Tooltip("Defines a radius around the origin point from which LOS checks will begin. Use a non-zero value " +
-                 "if there is a chance that LOS checks will be blocked by the targeter itself.")]
+        [Tooltip(FlexTargetingTooltips.TargeterLosBufferRadius)]
         [SerializeField, Min(0.0f)] protected float _losBufferRadius = 0.0f;
 
-        [Tooltip("The layers that will block the LOS raycasts. Set to None to ignore LOS checks.")]
+        [Tooltip(FlexTargetingTooltips.LosLayerMask)]
         [SerializeField] protected LayerMask _losLayerMask = Physics.DefaultRaycastLayers;
 
-        [Tooltip("Determine whether the LOS raycasts hit triggers.")]
+        [Tooltip(FlexTargetingTooltips.LosQueryTriggerInteraction)]
         [SerializeField] protected QueryTriggerInteraction _losQueryTriggerInteraction = QueryTriggerInteraction.Ignore;
+
 
         public virtual float MaxRange { get => _maxRange; set => _maxRange = value; }
         public virtual float HalfAngle { get => _halfAngle; set => _halfAngle = value; }

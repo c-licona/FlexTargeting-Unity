@@ -14,26 +14,26 @@ namespace Cyclic.FlexTargeting.Builtin
     public class RangeTargetingData : IFlexData<IFlexTarget>, IFlexDataGizmo
     {
         [Header("References")]
-        [Tooltip("Determine where targeter origin values are sourced from.")]
+        [Tooltip(FlexTargetingTooltips.TargeterOriginSource)]
         public TargeterOriginSource TargeterOriginSource = TargeterOriginSource.Transform;
 
-        [Tooltip("The transform to source targeter origin values from.")]
+        [Tooltip(FlexTargetingTooltips.TargeterOrigin)]
         public Transform TargeterOrigin = null;
 
 
         [Header("Settings")]
-        [Tooltip("The maximum range at which targets will be considered.")]
+        [Tooltip(FlexTargetingTooltips.MaxRange)]
         [SerializeField, Min(0.0f)] protected float _maxRange = 10.0f;
 
-        [Tooltip("Defines a radius around the origin point from which LOS checks will begin. Use a non-zero value " +
-                 "if there is a chance that LOS checks will be blocked by the targeter itself.")]
+        [Tooltip(FlexTargetingTooltips.TargeterLosBufferRadius)]
         [SerializeField, Min(0.0f)] protected float _losBufferRadius = 0.0f;
 
-        [Tooltip("The layers that will block the LOS raycasts. Set to None to ignore LOS checks.")]
+        [Tooltip(FlexTargetingTooltips.LosLayerMask)]
         [SerializeField] protected LayerMask _losLayerMask = Physics.DefaultRaycastLayers;
 
-        [Tooltip("Determine whether the LOS raycasts hit triggers.")]
+        [Tooltip(FlexTargetingTooltips.LosQueryTriggerInteraction)]
         [SerializeField] protected QueryTriggerInteraction _losQueryTriggerInteraction = QueryTriggerInteraction.Ignore;
+
 
         public virtual float MaxRange { get => _maxRange; set => _maxRange = value; }
         public virtual float LosBufferRadius { get => _losBufferRadius; set => _losBufferRadius = value; }
