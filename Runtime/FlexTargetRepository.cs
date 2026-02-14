@@ -32,6 +32,8 @@ namespace Cyclic.FlexTargeting
         /// <param name="targetToRemove">The target to remove from the repository.</param>
         /// <typeparam name="TTarget">The specific type of flex target that will be removed.</typeparam>
         void RemoveTarget<TTarget>(TTarget targetToRemove) where TTarget : class, IFlexTarget;
+
+        void Cleanup();
     }
 
     /// <summary>
@@ -79,8 +81,15 @@ namespace Cyclic.FlexTargeting
         /// repository. Target lists from your new repository will be retrieved by the core methods.
         /// </summary>
         /// <param name="repository">The new repository to use throughout the project.</param>
-        public static void ReplaceRepository(IFlexTargetRepository repository)
+        /// <param name="shouldCleanupOldRepository">Whether the <see cref="IFlexTargetRepository.Cleanup"/> method
+        /// should be ran on the repository that is being replaced.</param>
+        public static void ReplaceRepository(IFlexTargetRepository repository, bool shouldCleanupOldRepository = true)
         {
+            if (shouldCleanupOldRepository)
+            {
+                s_repository.Cleanup();
+            }
+
             s_repository = repository;
         }
     }

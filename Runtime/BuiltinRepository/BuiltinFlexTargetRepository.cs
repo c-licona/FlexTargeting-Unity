@@ -144,6 +144,19 @@ namespace Cyclic.FlexTargeting.BuiltinRepository
             _internalRepositories.Clear();
         }
 
+        public void Cleanup()
+        {
+            foreach (var repository in _internalRepositories.Values)
+            {
+                repository.Cleanup();
+            }
+
+            _internalRepositories.Clear();
+
+            s_instance = null;
+            Destroy(gameObject);
+        }
+
         public class InternalFlexTargetRepository<T> : IInternalFlexTargetRepository
             where T : class, IFlexTarget
         {
