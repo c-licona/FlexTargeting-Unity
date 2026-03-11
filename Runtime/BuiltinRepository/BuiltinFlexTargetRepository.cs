@@ -135,26 +135,31 @@ namespace Cyclic.FlexTargeting.BuiltinRepository
         private void OnApplicationQuit()
         {
             _isApplicationQuitting = true;
+            ClearRepositories();
+        }
 
-            foreach (var repository in _internalRepositories.Values)
-            {
-                repository.Cleanup();
-            }
-
-            _internalRepositories.Clear();
+        private void OnDestroy()
+        {
+            // when the application quits, OnApplicationQuit is called before OnDestroy
+            // only clear repositories if we are destroying a duplicate instance
+            if (!_isApplicationQuitting && s_instance == this)
+                ClearRepositories();
         }
 
         public void Cleanup()
+        {
+            ClearRepositories();
+            s_instance = null;
+            Destroy(gameObject);
+        }
+
+        private void ClearRepositories()
         {
             foreach (var repository in _internalRepositories.Values)
             {
                 repository.Cleanup();
             }
-
             _internalRepositories.Clear();
-
-            s_instance = null;
-            Destroy(gameObject);
         }
 
         public class InternalFlexTargetRepository<T> : IInternalFlexTargetRepository
