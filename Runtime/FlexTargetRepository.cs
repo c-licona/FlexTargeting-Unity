@@ -33,6 +33,10 @@ namespace Cyclic.FlexTargeting
         /// <typeparam name="TTarget">The specific type of flex target that will be removed.</typeparam>
         void RemoveTarget<TTarget>(TTarget targetToRemove) where TTarget : class, IFlexTarget;
 
+        /// <summary>
+        /// Executes any cleanup functionality on the repository that should be run when the repository is being
+        /// replaced.
+        /// </summary>
         void Cleanup();
     }
 
