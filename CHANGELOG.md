@@ -5,6 +5,19 @@ All notable changes to this package will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
+## [0.4.0] - 2026-03-12
+### Added
+- Added `Cleanup()` method to `IFlexTargetRepository` interface
+- Added `Cleanup` implementation to `BuiltinFlexTargetRepositoryAccessor` and `BuiltinFlexTargetRepository`
+- Added new feature: Flex Target Adapter
+    - The new `FlexTargetAdapter<T>` class wraps any type into an object that implements `IFlexTarget`, allowing it to be used in the core targeting methods
+    - In order for the adapter to work, 3 static functions must be defined in order to fully implement the `IFlexTarget` interface. These functions can be defined for the type that is being adapted using the method: `FlexTargetAdapter.SetAdapterFuncs<T>`, or with the more convenient `FlexTargetAdapter.Adapt<T>` extension method
+    - This new feature is primarily meant for one-off scenarios where performance and memory allocation is not a primary concern, such as debug commands. Use the `FlexTargetAdapter.Adapt<T>` method to adapt a list of objects that you want to adapt. This method will create new adapter objects and return a new list of adapters to use in the core methods. (This, of course, allocates memory. However, the core methods will not allocate memory as usual)
+    - Added another unit test file: `AdapterTest.cs`
+- Added `Documentation~` folder and image that will be used in documentation
+### Changed
+- Updated `FlexTargetRepository.ReplaceRepository` signature to optionally call `Cleanup` on the internal repository
+
 ## [0.3.0] - 2026-02-04
 This version has some backward **incompatible** changes.
 ### Removed

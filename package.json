@@ -1,7 +1,7 @@
 {
   "name": "com.clicona.flextargeting",
   "displayName": "Flex Targeting",
-  "version": "0.3.0",
+  "version": "0.4.0",
   "description": "A light-weight, flexible, allocation-free set of methods for finding the best target from a list of input targets.\nSee: https://github.com/c-licona/FlexTargeting-Unity\n\n- Builtin targeting solutions for the most common target finding scenarios  \n- Generic interfaces provide flexibility in building custom targeting solutions  \n- Multiple stages of filtering to optimize the selection of targets  \n- Strong focus on an allocation free implementation and supporting custom allocation free solutions  \n- Builtin repository for all custom types of targets for ease of use  \n- Line of sight handling with opt-out options",
   "author": {
     "name": "Christian Licona",
