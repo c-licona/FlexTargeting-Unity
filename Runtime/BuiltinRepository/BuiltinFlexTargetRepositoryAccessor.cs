@@ -25,5 +25,13 @@ namespace Cyclic.FlexTargeting.BuiltinRepository
                 targetRepository.RemoveTarget(targetToRemove);
             }
         }
+
+        public void Cleanup()
+        {
+            if (BuiltinFlexTargetRepository.TryGetInstance(out var repository))
+            {
+                repository.Cleanup();
+            }
+        }
     }
 }
