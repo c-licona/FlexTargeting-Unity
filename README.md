@@ -3,12 +3,12 @@ A light-weight, flexible, **allocation-free** set of methods for finding the bes
 - Builtin targeting solutions for the most common target finding scenarios
 - Generic interfaces provide flexibility in building custom targeting solutions
 - Multiple stages of filtering to optimize the selection of targets
-- Strong focus on an allocation free implementation and supporting custom allocation free solutions
-- Builtin repository for all custom types of targets for ease of use
-- Line of sight handling with opt-out options
+- Strong focus on an allocation-free implementation and supporting custom allocation free solutions
+- Builtin repository with easy registration for custom target types
+- Line-of-sight handling with opt-out options
 ## Usage
 ### DetermineBestTarget(s)
-There are 2 core methods: The first method and it's overloads return a single best target:
+The first core method and it's overloads return a single best target:
 ```csharp
 using Cyclic.FlexTargeting;
 
@@ -84,13 +84,11 @@ public interface IFlexData<in TTarget> where TTarget : IFlexTarget
 }
 ```
 
-The interface has some default implementations for the properties/methods that aren't commonly overridden. But of course, they can be overridden at any time.
+The `ScoreTarget` function determines the best target.
 
-The heart of the core targeting methods is the scoring functions that determine the best target. This scoring function is defined in the data that is passed into the core methods. I sometimes like to refer to these objects that implement `IFlexData` as targeting solutions.
+This package contains 2 common targeting solutions that implement `IFlexData` for convenience: [RangeTargetingData](https://github.com/c-licona/FlexTargeting-Unity/blob/main/Runtime/Builtin/RangeTargetingData.cs) and [DirectionTargetingData](https://github.com/c-licona/FlexTargeting-Unity/blob/main/Runtime/Builtin/DirectionTargetingData.cs). It also contains one more implementation which can be useful in certain cases but also acts as a good example of a slightly more complex solution: [ComboTargetingData](https://github.com/c-licona/FlexTargeting-Unity/blob/main/Runtime/Builtin/ComboTargetingData.cs).
 
-This package contains 2 common targeting solutions for convenience: [RangeTargetingData](https://github.com/c-licona/FlexTargeting-Unity/blob/dev/Runtime/Builtin/RangeTargetingData.cs) and [DirectionTargetingData](https://github.com/c-licona/FlexTargeting-Unity/blob/dev/Runtime/Builtin/DirectionTargetingData.cs). It also contains one more implementation which can be useful in certain cases but also acts as a good example of a slightly more complex solution: [ComboTargetingData](https://github.com/c-licona/FlexTargeting-Unity/blob/dev/Runtime/Builtin/ComboTargetingData.cs).
-
-Here is the scoring function for [RangeTargetingData](https://github.com/c-licona/FlexTargeting-Unity/blob/9a989b53b208886e95e84b399257b1c551aa429e/Runtime/Builtin/RangeTargetingData.cs#L54):
+Here is the scoring function for [RangeTargetingData](https://github.com/c-licona/FlexTargeting-Unity/blob/124f511ebaec234518d510cf70224b4bc5f08ef1/Runtime/Builtin/RangeTargetingData.cs#L54):
 
 ```csharp
 public virtual bool ScoreTarget(IFlexTarget target, out float score)
@@ -101,9 +99,9 @@ public virtual bool ScoreTarget(IFlexTarget target, out float score)
 ```
 ![range targeting visual example](Documentation~/c-licona-flextargeting-range01.gif)
 
-The `RangeTargetingData` is a very simple targeting solution that simply determines the closest target as the "best" target. This scoring function takes the distance between the targeter and the target, and uses that distance value as the score. This score value is then used by the targeting methods to sort the targets and output the target that had the lowest score value (smallest distance). Additionally, this `ScoreTarget` method returns a boolean value that can be used to cull/filter out any targets that have "invalid" scores.
+`RangeTargetingData` is a very simple targeting solution that simply determines the closest target as the "best" target. This scoring function takes the distance between the targeter and the target, and uses that distance value as the score. This score value is then used by the targeting methods to sort the targets and output the target that had the lowest score value (smallest distance). Additionally, this `ScoreTarget` method returns a boolean value that can be used to cull/filter out any targets that have "invalid" scores.
 
-Let's look at a slightly more complex scoring function from [DirectionTargetingData](https://github.com/c-licona/FlexTargeting-Unity/blob/dev/Runtime/Builtin/DirectionTargetingData.cs):
+[DirectionTargetingData](https://github.com/c-licona/FlexTargeting-Unity/blob/main/Runtime/Builtin/DirectionTargetingData.cs) is another useful targeting solution:
 ```csharp
 public virtual bool ScoreTarget(IFlexTarget target, out float score)
 {
@@ -117,9 +115,9 @@ public virtual bool ScoreTarget(IFlexTarget target, out float score)
 ```
 ![direction targeting visual example](Documentation~/c-licona-flextargeting-direction01.gif)
 
-The `DirectionTargetingData` solution determines the "best" target by taking the angle between 2 vectors: the targeter's "forward" direction, and the vector from the targeter to the target. The angle value is then used as the score. (A practical example of this would be to use the player camera as the targeter. Then the best target would be the target that is closest to the center of the player camera view). Since `Vector3.Angle` only ever returns a value between 0 and 180, then that is the total range the score can possibly be. The [ComboTargetingData](https://github.com/c-licona/FlexTargeting-Unity/blob/dev/Runtime/Builtin/ComboTargetingData.cs) solution actually takes advantage of this fact in its more complex scoring function.
+The `DirectionTargetingData` scoring function determines the "best" target by taking the angle between 2 vectors: the targeter's "forward" direction, and the vector from the targeter to the target. The angle value is then used as the score. (A practical example of this would be to use the player camera as the targeter. Then the best target would be the target that is closest to the center of the player camera view). Since `Vector3.Angle` only ever returns a value between 0 and 180, then that is the total range the score can possibly be. The [ComboTargetingData](https://github.com/c-licona/FlexTargeting-Unity/blob/main/Runtime/Builtin/ComboTargetingData.cs) solution actually takes advantage of this fact in its more complex scoring function.
 
-Another important method to implement for `IFlexData` is the `DoesPassFilter` method. Here is the [default implementation](https://github.com/c-licona/FlexTargeting-Unity/blob/9a989b53b208886e95e84b399257b1c551aa429e/Runtime/IFlexData.cs#L95) for this interface method:
+The `DoesPassFilter` method for `IFlexData` has a [default implementation](https://github.com/c-licona/FlexTargeting-Unity/blob/124f511ebaec234518d510cf70224b4bc5f08ef1/Runtime/IFlexData.cs#L95):
 ```csharp
 bool DoesPassFilter(TTarget target)
 {
@@ -128,9 +126,11 @@ bool DoesPassFilter(TTarget target)
 }
 ```
 
-This method is the first line of defense when it comes to filtering out targets in the core targeting methods. This default implementation will filter out any targets that are outside of the max range, as well as targets that are reporting themselves as "invalid." The `DirectionTargetingData` solution uses this default implementation, so if you put everything together then that solution will only return targets that are within range, that are valid, and that are within the defined `HalfAngle`.
+This method is the first line of defense when it comes to filtering out targets in the core targeting methods. This default implementation will filter out any targets that are outside of the max range, as well as targets that are reporting themselves as "invalid."
+
+`DirectionTargetingData` uses this default implementation, so if you put everything together then that solution will only return targets that are within range, that are valid, and that are within the defined `HalfAngle`.
 ### IFlexTarget
-Targets can be any class as long as it implements the `IFlexTarget` interface:
+Targets must implement the `IFlexTarget` interface:
 ```csharp
 public interface IFlexTarget {
     bool IsTargetValid { get; }
@@ -139,7 +139,7 @@ public interface IFlexTarget {
 }
 ```
 
-The most common situation is to create a new MonoBehavior script that implements the interface and gets attached the the game object that is your target.
+The most common setup for a target is to create a new MonoBehavior script that implements the interface and gets attached the the game object that is your target.
 - `IsTargetValid` can be used to optionally filter out your target based on certain conditions
 - `TargetPosition` would return the current position of the target the script is attached to
 - `LosBufferRadius` can be used to create a buffer around the target at which line-of-sight checks should end early so that they don't collide with the target itself and falsely cause the LOS check to fail
@@ -179,14 +179,14 @@ On the target side, LOS settings include:
 | ------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | Local tarball | Every [release](https://github.com/c-licona/FlexTargeting-Unity/releases) comes with a tarball file that I have generated and [signed with the Unity Package Manager](https://docs.unity3d.com/Manual/cus-export.html). <br><br>See this Unity documentation for more info on installing tarball files: https://docs.unity3d.com/Manual/upm-ui-tarball.html |
 | Local folder  | If you download the source code, you can install the package from a local folder. <br><br>See this Unity documentation for more info on installing from a local folder: https://docs.unity3d.com/Manual/upm-ui-local.html                                                                                                                                   |
-| Git URL       | You can install the package via the git URL.<br>Current: `https://github.com/c-licona/FlexTargeting-Unity.git#current`<br>Specific version example: `https://github.com/c-licona/FlexTargeting-Unity.git#v0.4.0`<br><br>See this Unity documentation for more info on installing via Git URL: https://docs.unity3d.com/Manual/upm-ui-giturl.html            |
+| Git URL       | You can install the package via the git URL.<br>Current: `https://github.com/c-licona/FlexTargeting-Unity.git#current`<br>Specific version example: `https://github.com/c-licona/FlexTargeting-Unity.git#v1.0.0`<br><br>See this Unity documentation for more info on installing via Git URL: https://docs.unity3d.com/Manual/upm-ui-giturl.html            |
 
 ## Requirements
 This package was developed starting in Unity 6000.3.3f1, however it is likely compatible with much earlier versions of Unity. Currently it does not have a strict minimum required version.
 
 However, this package does make use of C# interface default implementations. This feature appears to have been introduced in Unity 2021.2 with `.NET Standard 2.1`. I haven't checked myself but that may be the actual minimum required version.
 ## Known limitations
-The core targeting methods take input targets as a `IReadOnlyList` instead of as an `IEnumerable`. This is an intentional design choice in order to avoid allocations when iterating through the input list using `IEnumerable` and a foreach loop. See this article for more information: https://pikhota.com/posts/unity-foreach/
+The core targeting methods take input targets as a `IReadOnlyList` instead of as an `IEnumerable`. This is an intentional design choice in order to avoid allocations when iterating through the input list using `IEnumerable` and a foreach loop. See this post for more information: https://pikhota.com/posts/unity-foreach/
 ## Package contents
 
 ```
@@ -212,6 +212,7 @@ package.json
 
 | Date       | Description                                                                                                                                       |
 | ---------- | ------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 2026-04-04 | Editing pass on the whole document.                                                                                                               |
 | 2026-04-03 | Added gifs for range and direction targeting examples                                                                                             |
 | 2026-03-12 | Added new sections: Usage, Installation, Requirements, Known limitations, Package contents, Document revision history, Advanced topics, Reference |
 | 2026-01-30 | Added a new basic description                                                                                                                     |
@@ -232,13 +233,14 @@ In this example we are searching for the best target every frame and doing somet
 ```csharp
 class TargetingExample {
     public CustomTarget targetToIgnore; // assigned in editor
-    public TargetingData data;
+    public TargetingData data = new();
 
     bool Filter(CustomTarget target) {
         return target != targetToIgnore; // accept every target except the one to ignore
     }
 
     void Update() {
+        // WARNING! Allocation!
         FlexTargetingCore.DetermineBestTarget(data, out CustomTarget bestTarget, Filter);
         // do something with the returned bestTarget
     }
@@ -253,13 +255,14 @@ Now let's fix the previous example so that we no longer allocate every frame:
 ```csharp
 class TargetingExample {
     public CustomTarget targetToIgnore; // assigned in editor
-    public TargetingData data;
+    public TargetingData data = new();
 
     bool Filter(CustomTarget target) {
         return target != targetToIgnore; // accept every target except the one to ignore
     }
 
     void Update() {
+        //OK! No allocation.
         FlexTargetingCore.DetermineBestTarget(context: this, data,
             out CustomTarget bestTarget,
             (context, target) => context.Filter(target) );
@@ -270,7 +273,7 @@ class TargetingExample {
 > [!note]
 > This example does NOT allocate every frame!
 >
-> We use a lambda and the method overload of `DetermineBestTarget` that accepts a context object. Through this context object we can access the same "Filter" method from before without allocating every frame.
+> We use a lambda and the method overload of `DetermineBestTarget` that accepts a context object. We pass in `this` explicitly and access the same "Filter" method from before without allocating every frame.
 
 Check out these resources for more information:
 - [PrimeTween - Zero allocations with delegates](https://github.com/KyryloKuzyk/PrimeTween?tab=readme-ov-file#zero-allocations-with-delegates)
@@ -290,7 +293,7 @@ Repository methods are accessed through the `Cyclic.FlexTargeting.FlexTargetRepo
 There is one more method in this class if you would like to use your own implementation:
 - `ReplaceRepository(IFlexTargetRepository repository, bool shouldCleanupOldRepository = true) : void`
 
-The `FlexTargetRepository` static class contains an internal reference to an implementation of the `IFlexTargetRepository` interface. The 3 primary methods act as intermediaries into this internal repository. By default this field is [initialized](https://github.com/c-licona/FlexTargeting-Unity/blob/6b818c256ed2ddf75dfcbef04de08ee17af8c9fd/Runtime/FlexTargetRepository.cs#L50) with a class that accesses the provided builtin repository.
+The `FlexTargetRepository` static class contains an internal reference to an implementation of the `IFlexTargetRepository` interface. The 3 primary methods act as intermediaries into this internal repository. By default this field is [initialized](https://github.com/c-licona/FlexTargeting-Unity/blob/124f511ebaec234518d510cf70224b4bc5f08ef1/Runtime/FlexTargetRepository.cs#L50) with a class that accesses the provided builtin repository.
 
 In order to replace this internal reference:
 1. Create a new type (class, struct, etc.) that implements `IFlexTargetRepository`
@@ -298,16 +301,14 @@ In order to replace this internal reference:
 
 And that's it. All core methods and target implmentations will now use your repository.
 ### Disabling builtin targeting solutions
-This package comes with 3 builtin targeting solutions. Two of which are what I consider to be the most common targeting solutions: [RangeTargetingData](https://github.com/c-licona/FlexTargeting-Unity/blob/6b818c256ed2ddf75dfcbef04de08ee17af8c9fd/Runtime/Builtin/RangeTargetingData.cs) and [DirectionTargetingData](https://github.com/c-licona/FlexTargeting-Unity/blob/6b818c256ed2ddf75dfcbef04de08ee17af8c9fd/Runtime/Builtin/DirectionTargetingData.cs). The 3rd might not be as common but it's a good example of a slightly more complex solution that can be useful to reference.
-
-If for any reason you would like to disable compilation of these builtin solutions then you can define the custom scripting define symbol: `DISABLE_FLEXTARGETING_BUILTINS`. The assembly that contains these builtin solutions will no longer be compiled.
+This package comes with 3 builtin targeting solutions: Range, Direction, and Combo. If for any reason you would like to disable compilation of these builtin solutions then you can define the custom scripting define symbol: `DISABLE_FLEXTARGETING_BUILTINS`. The assembly that contains these builtin solutions will no longer be compiled.
 
 See the Unity documentation on [Custom scripting symbols](https://docs.unity3d.com/6000.3/Documentation/Manual/custom-scripting-symbols.html) for instructions on where you can define this symbol.
 
 > [!warning]
 > The `DISABLE_FLEXTARGETING_BUILTINS` symbol will **NOT** disable the builtin target repository. For more info on replacing the builtin repository, see the section: Target Repository Replacement.
 ### Adapters
-Flex target adapters temporarily turn any object/class into a `IFlexTarget` without needing to touch the class and have it explicitly implement the `IFlexTarget` interface. This can be useful when you want to quickly find these objects using the core targeting methods in a non-performance critical context.
+Flex target adapters temporarily turn any object/class into a `IFlexTarget` without needing to touch the class and have it explicitly implement the `IFlexTarget` interface. This can be useful when you want to quickly find these objects using the core targeting methods in a **non-performance critical context**.
 
 In this example, we get all `Light` components in the scene and then adapt that array into a list of adapters that can then be used in `DetermineBestTarget`. We pass in lambdas for each function that is required for the adaptation.
 ```csharp
@@ -320,6 +321,8 @@ var adaptedLightsList = lightsArray.Adapt(
 
 FlexTargetingCore.DetermineBestTarget(data, out var bestTarget, adaptedLightsList);
 ```
+> [!warning]
+> Unlike the rest of this library, the `Adapt` method **will** allocate memory every call since it creates a new list every time. For this reason, adapters should not be used in a **performance critical context**.
 ## Reference
 ### Core methods - return single target
 Core methods for returning a single best target:
@@ -331,7 +334,7 @@ Core methods for returning a single best target:
 | `DetermineBestTarget<T>(IFlexData<T>, out T, TargetFilter<T>) : bool`                   |
 | `DetermineBestTarget<T>(IFlexData<T>, out T, IReadOnlyList<T>, TargetFilter<T>) : bool` |
 
-Core methods with context for returning a single best target:
+Core methods *with context* for returning a single best target:
 
 | `FlexTargetingCore.`                                                                           |
 | ---------------------------------------------------------------------------------------------- |
@@ -347,7 +350,7 @@ Core methods for returning a sorted list of the best targets:
 | `DetermineBestTargets<T>(IFlexData<T>, ICollection<T>, TargetFilter<T>) : int`                   |
 | `DetermineBestTargets<T>(IFlexData<T>, ICollection<T>, IReadOnlyList<T>, TargetFilter<T>) : int` |
 
-Core methods with context for returning a sorted list of the best targets:
+Core methods *with context* for returning a sorted list of the best targets:
 
 | `FlexTargetingCore.`                                                                                   |
 | ------------------------------------------------------------------------------------------------------ |
