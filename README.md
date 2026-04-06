@@ -182,9 +182,9 @@ On the target side, LOS settings include:
 | Git URL       | You can install the package via the git URL.<br>Current: `https://github.com/c-licona/FlexTargeting-Unity.git#current`<br>Specific version example: `https://github.com/c-licona/FlexTargeting-Unity.git#v1.0.0`<br><br>See this Unity documentation for more info on installing via Git URL: https://docs.unity3d.com/Manual/upm-ui-giturl.html            |
 
 ## Requirements
-This package was developed starting in Unity 6000.3.3f1, however it is likely compatible with much earlier versions of Unity. Currently it does not have a strict minimum required version.
+This package was developed starting in Unity `6000.3.3f1` and has also been tested to ensure there are no compilation issues in (potentially) one of the earliest supported Unity versions: `2021.2.20f1`
 
-However, this package does make use of C# interface default implementations. This feature appears to have been introduced in Unity 2021.2 with `.NET Standard 2.1`. I haven't checked myself but that may be the actual minimum required version.
+This package makes use of C# [interface default implementations](https://learn.microsoft.com/en-us/dotnet/csharp/language-reference/keywords/interface#default-interface-members). This feature appears to have been introduced in Unity `2021.2` with `.NET Standard 2.1`. So that should likely be the absolute minimum supported unity version for this package.
 ## Known limitations
 The core targeting methods take input targets as a `IReadOnlyList` instead of as an `IEnumerable`. This is an intentional design choice in order to avoid allocations when iterating through the input list using `IEnumerable` and a foreach loop. See this post for more information: https://pikhota.com/posts/unity-foreach/
 ## Package contents

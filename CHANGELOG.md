@@ -8,6 +8,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ## [1.0.0] - 2026-04-05
 ### Changed
 - Updated README for official v1.0.0 release
+- Added support for unity versions without `FindAnyObjectByType`
+- Defined minimum supported editor version to be 2021.2 (this was when default interface implementations were introduced)
 
 ## [0.4.0] - 2026-03-12
 ### Added
