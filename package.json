@@ -10,5 +10,6 @@
   },
   "changelogUrl": "CHANGELOG.md",
   "documentationUrl": "https://github.com/c-licona/FlexTargeting-Unity",
-  "licensesUrl": "LICENSE.md"
+  "licensesUrl": "LICENSE.md",
+  "unity": "2021.2"
 }
