@@ -98,6 +98,7 @@ public virtual bool ScoreTarget(IFlexTarget target, out float score)
 }
 ```
 ![range targeting visual example](Documentation~/c-licona-flextargeting-range01.gif)
+(*This gif comes from an internal test project that is not included with this repository*)
 
 `RangeTargetingData` is a very simple targeting solution that simply determines the closest target as the "best" target. This scoring function takes the distance between the targeter and the target, and uses that distance value as the score. This score value is then used by the targeting methods to sort the targets and output the target that had the lowest score value (smallest distance). Additionally, this `ScoreTarget` method returns a boolean value that can be used to cull/filter out any targets that have "invalid" scores.
 
@@ -114,6 +115,7 @@ public virtual bool ScoreTarget(IFlexTarget target, out float score)
 }
 ```
 ![direction targeting visual example](Documentation~/c-licona-flextargeting-direction01.gif)
+(*This gif comes from an internal test project that is not included with this repository*)
 
 The `DirectionTargetingData` scoring function determines the "best" target by taking the angle between 2 vectors: the targeter's "forward" direction, and the vector from the targeter to the target. The angle value is then used as the score. (A practical example of this would be to use the player camera as the targeter. Then the best target would be the target that is closest to the center of the player camera view). Since `Vector3.Angle` only ever returns a value between 0 and 180, then that is the total range the score can possibly be. The [ComboTargetingData](https://github.com/c-licona/FlexTargeting-Unity/blob/main/Runtime/Builtin/ComboTargetingData.cs) solution actually takes advantage of this fact in its more complex scoring function.
 
@@ -212,6 +214,7 @@ package.json
 
 | Date       | Description                                                                                                                                       |
 | ---------- | ------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 2026-04-05 | Updated "Requirements" section. Added disclaimers under gifs.                                                                                     |
 | 2026-04-04 | Editing pass on the whole document.                                                                                                               |
 | 2026-04-03 | Added gifs for range and direction targeting examples                                                                                             |
 | 2026-03-12 | Added new sections: Usage, Installation, Requirements, Known limitations, Package contents, Document revision history, Advanced topics, Reference |
