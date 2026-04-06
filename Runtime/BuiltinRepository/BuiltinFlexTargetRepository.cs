@@ -76,7 +76,11 @@ namespace Cyclic.FlexTargeting.BuiltinRepository
             {
                 if (s_instance == null)
                 {
+#if (UNITY_2022 && UNITY_2022_3_OR_NEWER) || (UNITY_2023 && UNITY_2023_2_OR_NEWER) || UNITY_6000_0_OR_NEWER
                     s_instance = FindAnyObjectByType<BuiltinFlexTargetRepository>(FindObjectsInactive.Exclude);
+#else
+                    s_instance = FindObjectOfType<BuiltinFlexTargetRepository>(includeInactive: false);
+#endif
                     if (s_instance == null)
                     {
                         var go = new GameObject("BuiltinFlexTargetRepository Auto-Generated");
